@@ -40,19 +40,25 @@ int main()
 	socklen_t clientSize = sizeof(client);
 	char host[NI_MAXHOST];
 	char svc[NI_MAXSERV];
-
-	int clientSocket = accept(listening, (sockaddr*)&client, &clientSize);
-	if (clientSocket == -1)
+	int pid;
+	int clientSocket;
+	while (true)
 	{
-		cerr << "Problem with client connecting!";
-		return -4;
-	}
-
+		
+		clientSocket = accept(listening, (sockaddr*)&client, &clientSize);
+		if (clientSocket == -1)
+		{
+			cerr << "Problem with client connecting!";
+			return -4;
+		}
+		pid = fork();	
 	//Close the listening socket
-	close (listening);
-	memset(host, 0, NI_MAXHOST);
-	memset(svc, 0, NI_MAXSERV);
-
+	//close (listening);
+		memset(host, 0, NI_MAXHOST);
+		memset(svc, 0, NI_MAXSERV);
+		if (!pid)
+			break;
+	}
 	int result = getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, svc, NI_MAXSERV, 0);
 
 	if (result)
