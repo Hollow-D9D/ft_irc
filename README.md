@@ -2,6 +2,10 @@
 
 ## Resources
 
+2-minute Intro to IRC: https://www.youtube.com/watch?v=-4ab5-F72nY
+
+IRC server implementation in Node.js: https://github.com/song940/node-irc
+
 RFC for IRC: https://datatracker.ietf.org/doc/html/rfc1459#section-1.1
 
 Guide for ft_irc (in Russian): https://www.youtube.com/watch?v=I9o-oTdsMgI
