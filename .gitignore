@@ -1,0 +1,9 @@
+*.o
+*.out
+*.log
+.vscode/
+*.exe
+.DS_Store
+objs/
+temp/
+ircserv
