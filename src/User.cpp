@@ -6,20 +6,22 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 17:17:08 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/02 23:33:54 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.h"
+#include "Command.h"
+#include "Server.h"
 #include <iostream>
+#include <string>
 #include <sys/socket.h>
 #include <unistd.h>
-#include "Server.h"
-#include "Command.h"
 #include <vector>
-#include <string>
 
-User::User(int fd, const std::string &hostname, const std::string &hostaddr) : m_fd(fd), m_status(USER_STATUS_PASSWORD), m_hostname(hostname), m_hostaddr(hostaddr) {}
+User::User(int fd, const std::string &hostname, const std::string &hostaddr)
+    : m_fd(fd), m_status(USER_STATUS_PASSWORD), m_hostname(hostname),
+      m_hostaddr(hostaddr) {}
 
 User::~User() {}
 
@@ -58,7 +60,8 @@ void User::handle(const Server &server) {
   }
 
   std::string message(buffer, size);
-  message.erase(std::remove(message.begin(), message.end(), '\n'), message.cend());
+  message.erase(std::remove(message.begin(), message.end(), '\n'),
+                message.cend());
 
   Command command(message);
 
@@ -81,7 +84,8 @@ void User::handle(const Server &server) {
   //   if (message.find("PASS", 0) != 0)
   //     break;
 
-  //   std::cout << "'" << message.substr(5) << "' '" << server.get_password() << "'\n";
+  //   std::cout << "'" << message.substr(5) << "' '" << server.get_password()
+  //   << "'\n";
 
   //   if (message.substr(5) != server.get_password()) {
   //     m_status = USER_STATUS_REGISTER;
@@ -109,5 +113,4 @@ void User::handle(const Server &server) {
   // }
 
   // std::cout << m_hostname << "@" << m_hostaddr << " " << message << "\n";
-
 }

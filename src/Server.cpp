@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 17:14:30 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/02 23:33:25 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ int Server::init() {
 
   // Allow reuse of port
   int enable = 1;
-  if (setsockopt(m_listening_fd, SOL_SOCKET, SO_REUSEADDR,
-                 &enable, sizeof(enable)) == -1)
+  if (setsockopt(m_listening_fd, SOL_SOCKET, SO_REUSEADDR, &enable,
+                 sizeof(enable)) == -1)
     throw std::runtime_error("Failed to allow reuse of port.");
 
   // Make listening socket non blocking.
@@ -70,11 +70,11 @@ int Server::init() {
 
   // Set flags for epoll event
   // if (!add_socket_to_epoll(m_listening_fd))
-    // throw std::runtime_error("Failed to set flags for epoll.");
+  // throw std::runtime_error("Failed to set flags for epoll.");
 
   FD_ZERO(&m_master_fds);
   FD_SET(m_listening_fd, &m_master_fds);
-  
+
   // Start listening to the socket
   if (listen(m_listening_fd, SOMAXCONN) == -1)
     throw std::runtime_error("Failed to listen.");

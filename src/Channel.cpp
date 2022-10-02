@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Channel.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/02 23:33:10 by aabajyan          #+#    #+#             */
+/*   Updated: 2022/10/02 23:33:10 by aabajyan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 // #include "Channel.hpp"
 
 // Channel::Channel() : mode("n") {}
@@ -65,10 +77,11 @@
 //     {   this->invited_users.push_back(&user); }
 
 // bool Channel::isInvitedUser(User &user)
-//     { return std::find(invited_users.begin(), invited_users.end(), &user) != invited_users.end(); }
+//     { return std::find(invited_users.begin(), invited_users.end(), &user) !=
+//     invited_users.end(); }
 
 // void Channel::eraseInvitedUser(User &user)
-// { 
+// {
 //     std::vector<User *>::iterator it;
 //     it = std::find(invited_users.begin(), invited_users.end(), &user);
 //     if (it != invited_users.end())
@@ -81,4 +94,3 @@
 //     for (it = this->users.begin(); it != this->users.end(); ++it)
 //         user.sendTo(*it->second, message);
 // }
-

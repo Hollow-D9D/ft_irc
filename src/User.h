@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 16:22:30 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/02 23:34:07 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ public:
   const std::string &get_hostaddr() const;
   const std::string &get_username() const;
   const std::string &get_nickname() const;
-
 
   void set_username(const std::string &username);
   void set_nickname(const std::string &nickname);
