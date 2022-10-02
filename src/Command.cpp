@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:16 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 23:33:16 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 01:41:51 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ const std::vector<std::string> &Command::get_arguments() const {
 
 const std::string &Command::get_prefix() const { return m_prefix; }
 
-Command::Command(std::string message) {
+User &Command::get_sender() { return m_sender; }
+
+Command::Command(User &sender, std::string message) : m_sender(sender) {
 
   size_t pos = message.find(":");
   if (pos != std::string::npos) {

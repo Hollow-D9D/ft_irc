@@ -6,7 +6,7 @@
 #    By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/24 20:41:09 by aabajyan          #+#    #+#              #
-#    Updated: 2022/10/01 19:25:54 by aabajyan         ###   ########.fr        #
+#    Updated: 2022/10/02 23:42:26 by aabajyan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ fclean: clean
 
 re: fclean $(NAME)
 
-debug: CXXFLAGS += -g -O0
+debug: CXXFLAGS += -g -O0 -DDEBUG
 debug: re
 
 .PHONY: all clean fclean re debug

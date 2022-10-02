@@ -6,11 +6,12 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 23:33:25 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 01:44:44 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.h"
+#include "Command.h"
 #include "User.h"
 #include <arpa/inet.h>
 #include <cerrno>
@@ -23,18 +24,30 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-Server::Server(int port, std::string password)
-    : m_port(port), m_password(password), m_listening_fd(-1) {}
+void test(Command &command) {
+  User &sender = command.get_sender();
+  sender.send_to(sender, "PONG!");
+}
+
+Server::Server(int port, const std::string &password)
+    : m_port(port), m_password(password), m_listening_fd(-1) {
+  m_commands["TEST"] = test;
+}
 
 Server::~Server() {
-  for (std::vector<User *>::iterator it = m_users.begin(); it != m_users.end();
-       ++it)
-    delete *it;
+  for (std::map<int, User *>::iterator it = m_users.begin();
+       it != m_users.end(); ++it)
+    delete it->second;
 }
 
 const std::string &Server::get_password() const { return m_password; }
 
 int Server::get_port() const { return m_port; }
+
+const std::map<std::string, CommandHandlerCallback>
+Server::get_commands() const {
+  return m_commands;
+}
 
 int Server::init() {
   if (m_listening_fd != -1)
@@ -63,15 +76,6 @@ int Server::init() {
   if (bind(m_listening_fd, (sockaddr *)&hint, sizeof(hint)) == -1)
     throw std::runtime_error("Failed to bind IP/Port to the socket.");
 
-  // Create epoll file descriptor
-  // m_epoll_fd = epoll_create1(0);
-  // if (m_epoll_fd == -1)
-  // throw std::runtime_error("Failed to create epoll fd.");
-
-  // Set flags for epoll event
-  // if (!add_socket_to_epoll(m_listening_fd))
-  // throw std::runtime_error("Failed to set flags for epoll.");
-
   FD_ZERO(&m_master_fds);
   FD_SET(m_listening_fd, &m_master_fds);
 
@@ -98,18 +102,19 @@ void Server::handle() {
         accept_new_connection();
         continue;
       }
-      User *user = find_user_by_fd(i);
-      if (user)
-        user->handle(*this);
+
+      std::map<int, User *>::iterator it = m_users.find(i);
+      if (it != m_users.end())
+        it->second->handle(*this);
     }
 
   // Cleanup
-  for (std::vector<User *>::iterator it = m_users.begin();
+  for (std::map<int, User *>::iterator it = m_users.begin();
        it != m_users.end();) {
-    User *user = *it;
+    User *user = it->second;
     if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
       delete user;
-      it = m_users.erase(it);
+      m_users.erase(it++);
     } else
       ++it;
   }
@@ -141,9 +146,7 @@ void Server::accept_new_connection() {
   }
 
   FD_SET(fd, &m_master_fds);
-
-  m_users.push_back(new User(fd, host, srv));
-
+  m_users[fd] = new User(fd, host, srv);
   return;
 }
 
@@ -152,20 +155,4 @@ bool Server::make_socket_nonblocking(int fd) {
   if (flag == -1)
     return false;
   return fcntl(fd, F_SETFL, flag | O_NONBLOCK) != -1;
-}
-
-// bool Server::add_socket_to_epoll(int fd) {
-//   m_epoll_event.data.fd = fd;
-//   m_epoll_event.events = EPOLLIN | EPOLLET;
-//   return epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &m_epoll_event) != -1;
-// }
-
-User *Server::find_user_by_fd(int fd) {
-  for (std::vector<User *>::iterator it = m_users.begin(); it != m_users.end();
-       ++it) {
-    User *user = *it;
-    if (user->get_fd() == fd)
-      return user;
-  }
-  return NULL;
 }

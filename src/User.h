@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 23:34:07 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 01:42:34 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,17 @@ public:
   const std::string &get_hostaddr() const;
   const std::string &get_username() const;
   const std::string &get_nickname() const;
+  const std::string &get_host() const;
+  std::string get_prefix() const;
 
   void set_username(const std::string &username);
   void set_nickname(const std::string &nickname);
+  void set_hostname(const std::string &hostname);
+  void set_hostaddr(const std::string &hostaddr);
 
   void handle(const Server &server);
-  void reply(const std::string &message);
+  void write(const std::string &message);
+  void send_to(User &user, const std::string &message);
 
 private:
   int m_fd;

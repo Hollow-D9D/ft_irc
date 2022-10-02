@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 23:38:36 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 01:42:41 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,43 @@ int User::get_fd() const { return m_fd; }
 UserStatus User::get_status() const { return m_status; }
 
 const std::string &User::get_hostname() const { return m_hostname; }
+
 const std::string &User::get_hostaddr() const { return m_hostaddr; }
 
 const std::string &User::get_username() const { return m_username; }
+
 const std::string &User::get_nickname() const { return m_nickname; }
 
+const std::string &User::get_host() const {
+  return m_hostname.empty() ? m_hostaddr : m_hostname;
+}
+
+std::string User::get_prefix() const {
+  std::string prefix = m_nickname;
+  const std::string &host = get_host();
+  if (!host.empty()) {
+    if (!m_username.empty())
+      prefix += "!" + m_username;
+    prefix += "@" + host;
+  }
+  return prefix;
+}
+
 void User::set_username(const std::string &username) { m_username = username; }
+
 void User::set_nickname(const std::string &nickname) { m_nickname = nickname; }
 
-void User::reply(const std::string &message) {
+void User::set_hostname(const std::string &hostname) { m_hostname = hostname; }
+
+void User::set_hostaddr(const std::string &hostaddr) { m_hostaddr = hostaddr; }
+
+void User::write(const std::string &message) {
   std::string formatted = message + "\r\n";
   send(m_fd, formatted.data(), formatted.size(), 0);
+}
+
+void User::send_to(User &user, const std::string &message) {
+  user.write(":" + get_prefix() + " " + message);
 }
 
 void User::handle(const Server &server) {
@@ -64,18 +90,14 @@ void User::handle(const Server &server) {
   message.erase(std::remove(message.begin(), message.end(), '\n'),
                 message.end());
 
-  Command command(message);
-
-  std::cout << command.get_message() << "\n";
-
-  const std::vector<std::string> &args = command.get_arguments();
-
-  for (size_t i = 0; i < args.size(); ++i)
-    std::cout << args[i] << "\n";
-
-  std::cout << command.get_prefix() << "\n";
-
-  (void)server;
+  Command command(*this, message);
+  const std::map<std::string, CommandHandlerCallback> &commands =
+      server.get_commands();
+  std::map<std::string, CommandHandlerCallback>::const_iterator it =
+      commands.find(command.get_prefix());
+  if (it != commands.end()) {
+    it->second(command);
+  }
 
   // std::string password;
 
@@ -104,7 +126,7 @@ void User::handle(const Server &server) {
 
   //   if (!m_nickname.empty() && !m_username.empty()) {
   //     m_status = USER_STATUS_ONLINE;
-  //     reply("Welcome!");
+  //     write("Welcome!");
   //   }
 
   //   break;
