@@ -141,10 +141,6 @@ void Server::accept_new_connection() {
   }
 
   FD_SET(fd, &m_master_fds);
-  // if (!add_socket_to_epoll(fd)) {
-  //   std::cerr << "Error: Failed to add socket to epoll event.\n";
-  //   return;
-  // }
 
   m_users.push_back(new User(fd, host, srv));
 

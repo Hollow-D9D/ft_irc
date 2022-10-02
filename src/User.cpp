@@ -15,6 +15,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "Server.h"
+#include "Command.h"
+#include <vector>
+#include <string>
 
 User::User(int fd, const std::string &hostname, const std::string &hostaddr) : m_fd(fd), m_status(USER_STATUS_PASSWORD), m_hostname(hostname), m_hostaddr(hostaddr) {}
 
@@ -57,44 +60,54 @@ void User::handle(const Server &server) {
   std::string message(buffer, size);
   message.erase(std::remove(message.begin(), message.end(), '\n'), message.cend());
 
-  std::string password;
+  Command command(message);
 
-  switch (m_status) {
-    case USER_STATUS_PASSWORD:
+  std::cout << command.get_message() << "\n";
 
-    if (message.find("PASS", 0) != 0)
-      break;
+  const std::vector<std::string> &args = command.get_arguments();
 
-    std::cout << "'" << message.substr(5) << "' '" << server.get_password() << "'\n";
+  for (size_t i = 0; i < args.size(); ++i)
+    std::cout << args[i] << "\n";
 
-    if (message.substr(5) != server.get_password()) {
-      reply("Wrong password!");
-      break;
-    }
+  std::cout << command.get_prefix() << "\n";
 
-    m_status = USER_STATUS_REGISTER;
+  (void)server;
 
-    break;
+  // std::string password;
 
-    case USER_STATUS_REGISTER:
+  // switch (m_status) {
+  //   case USER_STATUS_PASSWORD:
 
-    if (message.find("USER", 0) == 0)
-      set_username(message.substr(5));
+  //   if (message.find("PASS", 0) != 0)
+  //     break;
 
-    if (message.find("NICK", 0) == 0)
-      set_nickname(message.substr(5));
+  //   std::cout << "'" << message.substr(5) << "' '" << server.get_password() << "'\n";
 
-    if (!m_nickname.empty() && !m_username.empty()) {
-      m_status = USER_STATUS_ONLINE;
-      reply("Welcome!");
-    }
+  //   if (message.substr(5) != server.get_password()) {
+  //     m_status = USER_STATUS_REGISTER;
+  //   }
 
-    break;
+  //   break;
 
-    default:
-    break;
-  }
+  //   case USER_STATUS_REGISTER:
 
-  std::cout << m_hostname << "@" << m_hostaddr << " " << message << "\n";
+  //   if (message.find("USER", 0) == 0)
+  //     set_username(message.substr(5));
+
+  //   if (message.find("NICK", 0) == 0)
+  //     set_nickname(message.substr(5));
+
+  //   if (!m_nickname.empty() && !m_username.empty()) {
+  //     m_status = USER_STATUS_ONLINE;
+  //     reply("Welcome!");
+  //   }
+
+  //   break;
+
+  //   default:
+  //   break;
+  // }
+
+  // std::cout << m_hostname << "@" << m_hostaddr << " " << message << "\n";
 
 }
