@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 01:44:44 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 02:31:19 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void test(Command &command) {
-  User &sender = command.get_sender();
-  sender.send_to(sender, "PONG!");
-}
+void PASS(Command &command);
+void NICK(Command &command);
 
 Server::Server(int port, const std::string &password)
     : m_port(port), m_password(password), m_listening_fd(-1) {
-  m_commands["TEST"] = test;
+  m_commands["PASS"] = PASS;
+  m_commands["NICK"] = NICK;
 }
 
 Server::~Server() {
@@ -48,6 +47,8 @@ const std::map<std::string, CommandHandlerCallback>
 Server::get_commands() const {
   return m_commands;
 }
+
+std::map<int, User *> &Server::get_users() { return m_users; }
 
 int Server::init() {
   if (m_listening_fd != -1)

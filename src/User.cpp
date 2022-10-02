@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 01:42:41 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 02:33:58 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ void User::set_hostname(const std::string &hostname) { m_hostname = hostname; }
 
 void User::set_hostaddr(const std::string &hostaddr) { m_hostaddr = hostaddr; }
 
+void User::set_status(UserStatus status) { m_status = status; }
+
 void User::write(const std::string &message) {
   std::string formatted = message + "\r\n";
   send(m_fd, formatted.data(), formatted.size(), 0);
@@ -70,7 +72,7 @@ void User::send_to(User &user, const std::string &message) {
   user.write(":" + get_prefix() + " " + message);
 }
 
-void User::handle(const Server &server) {
+void User::handle(Server &server) {
 
   if (m_status == USER_STATUS_DISCONNECTED)
     return;
@@ -90,12 +92,13 @@ void User::handle(const Server &server) {
   message.erase(std::remove(message.begin(), message.end(), '\n'),
                 message.end());
 
-  Command command(*this, message);
+  Command command(server, *this, message);
   const std::map<std::string, CommandHandlerCallback> &commands =
       server.get_commands();
   std::map<std::string, CommandHandlerCallback>::const_iterator it =
       commands.find(command.get_prefix());
   if (it != commands.end()) {
+    std::cout << "Calling " << command.get_prefix() << "\n";
     it->second(command);
   }
 

@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 01:42:34 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 02:21:34 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,9 @@ public:
   void set_nickname(const std::string &nickname);
   void set_hostname(const std::string &hostname);
   void set_hostaddr(const std::string &hostaddr);
+  void set_status(UserStatus status);
 
-  void handle(const Server &server);
+  void handle(Server &server);
   void write(const std::string &message);
   void send_to(User &user, const std::string &message);
 

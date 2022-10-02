@@ -6,11 +6,12 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:16 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 01:41:51 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 02:20:39 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.h"
+#include "Server.h"
 #include <sstream>
 
 const std::string &Command::get_message() const { return m_message; }
@@ -23,7 +24,10 @@ const std::string &Command::get_prefix() const { return m_prefix; }
 
 User &Command::get_sender() { return m_sender; }
 
-Command::Command(User &sender, std::string message) : m_sender(sender) {
+Server &Command::get_server() { return m_server; }
+
+Command::Command(Server &server, User &sender, std::string message)
+    : m_server(server), m_sender(sender) {
 
   size_t pos = message.find(":");
   if (pos != std::string::npos) {

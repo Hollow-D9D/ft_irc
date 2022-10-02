@@ -6,7 +6,7 @@
 #    By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/24 20:41:09 by aabajyan          #+#    #+#              #
-#    Updated: 2022/10/02 23:42:26 by aabajyan         ###   ########.fr        #
+#    Updated: 2022/10/03 02:31:35 by aabajyan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME = ircserv
 SRCS = $(wildcard src/**/*.cpp) $(wildcard src/*.cpp)
 OBJS = $(SRCS:src/%.cpp=objs/%.o)
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -pedantic -Isrc
 
 all: $(NAME)
 
