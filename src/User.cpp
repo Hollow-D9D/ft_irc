@@ -14,8 +14,9 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <unistd.h>
+#include "Server.h"
 
-User::User(int fd) : m_fd(fd), m_status(USER_STATUS_PASSWORD) {}
+User::User(int fd, const std::string &hostname, const std::string &hostaddr) : m_fd(fd), m_status(USER_STATUS_PASSWORD), m_hostname(hostname), m_hostaddr(hostaddr) {}
 
 User::~User() {}
 
@@ -23,7 +24,21 @@ int User::get_fd() const { return m_fd; }
 
 UserStatus User::get_status() const { return m_status; }
 
-void User::handle() {
+const std::string &User::get_hostname() const { return m_hostname; }
+const std::string &User::get_hostaddr() const { return m_hostaddr; }
+
+const std::string &User::get_username() const { return m_username; }
+const std::string &User::get_nickname() const { return m_nickname; }
+
+void User::set_username(const std::string &username) { m_username = username; }
+void User::set_nickname(const std::string &nickname) { m_nickname = nickname; }
+
+void User::reply(const std::string &message) {
+  std::string formatted = message + "\r\n";
+  send(m_fd, formatted.data(), formatted.size(), 0);
+}
+
+void User::handle(const Server &server) {
 
   if (m_status == USER_STATUS_DISCONNECTED)
     return;
@@ -39,5 +54,47 @@ void User::handle() {
     return;
   }
 
-  std::cout << m_fd << ": " << buffer << "\n";
+  std::string message(buffer, size);
+  message.erase(std::remove(message.begin(), message.end(), '\n'), message.cend());
+
+  std::string password;
+
+  switch (m_status) {
+    case USER_STATUS_PASSWORD:
+
+    if (message.find("PASS", 0) != 0)
+      break;
+
+    std::cout << "'" << message.substr(5) << "' '" << server.get_password() << "'\n";
+
+    if (message.substr(5) != server.get_password()) {
+      reply("Wrong password!");
+      break;
+    }
+
+    m_status = USER_STATUS_REGISTER;
+
+    break;
+
+    case USER_STATUS_REGISTER:
+
+    if (message.find("USER", 0) == 0)
+      set_username(message.substr(5));
+
+    if (message.find("NICK", 0) == 0)
+      set_nickname(message.substr(5));
+
+    if (!m_nickname.empty() && !m_username.empty()) {
+      m_status = USER_STATUS_ONLINE;
+      reply("Welcome!");
+    }
+
+    break;
+
+    default:
+    break;
+  }
+
+  std::cout << m_hostname << "@" << m_hostaddr << " " << message << "\n";
+
 }

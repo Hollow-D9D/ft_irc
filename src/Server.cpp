@@ -24,14 +24,17 @@
 #include <unistd.h>
 
 Server::Server(int port, std::string password)
-    : m_port(port), m_password(password), m_listening_fd(-1), m_epoll_fd(-1),
-      m_epoll_event(), m_events() {}
+    : m_port(port), m_password(password), m_listening_fd(-1) {}
 
 Server::~Server() {
   for (std::vector<User *>::iterator it = m_users.begin(); it != m_users.end();
        ++it)
     delete *it;
 }
+
+const std::string &Server::get_password() const { return m_password; }
+
+int Server::get_port() const { return m_port; }
 
 int Server::init() {
   if (m_listening_fd != -1)
@@ -43,7 +46,7 @@ int Server::init() {
 
   // Allow reuse of port
   int enable = 1;
-  if (setsockopt(m_listening_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+  if (setsockopt(m_listening_fd, SOL_SOCKET, SO_REUSEADDR,
                  &enable, sizeof(enable)) == -1)
     throw std::runtime_error("Failed to allow reuse of port.");
 
@@ -61,14 +64,17 @@ int Server::init() {
     throw std::runtime_error("Failed to bind IP/Port to the socket.");
 
   // Create epoll file descriptor
-  m_epoll_fd = epoll_create1(0);
-  if (m_epoll_fd == -1)
-    throw std::runtime_error("Failed to create epoll fd.");
+  // m_epoll_fd = epoll_create1(0);
+  // if (m_epoll_fd == -1)
+  // throw std::runtime_error("Failed to create epoll fd.");
 
   // Set flags for epoll event
-  if (!add_socket_to_epoll(m_listening_fd))
-    throw std::runtime_error("Failed to set flags for epoll.");
+  // if (!add_socket_to_epoll(m_listening_fd))
+    // throw std::runtime_error("Failed to set flags for epoll.");
 
+  FD_ZERO(&m_master_fds);
+  FD_SET(m_listening_fd, &m_master_fds);
+  
   // Start listening to the socket
   if (listen(m_listening_fd, SOMAXCONN) == -1)
     throw std::runtime_error("Failed to listen.");
@@ -80,36 +86,28 @@ int Server::init() {
 
 void Server::handle() {
 
-  int n = epoll_wait(m_epoll_fd, m_events, SERVER_MAX_CONNECTIONS, -1);
+  fd_set clone = m_master_fds;
+  int count = select(FD_SETSIZE, &clone, NULL, NULL, 0);
 
-  for (int i = 0; i < n; ++i) {
-    epoll_event &event = m_events[i];
+  if (count < 0)
+    throw std::runtime_error("Failed to run select function.");
 
-    // Check whenever it's a invalid event, if so close the fd.
-    if (event.events & EPOLLERR || event.events & EPOLLHUP ||
-        !(event.events & EPOLLIN)) {
-      std::cerr << "Info: Epoll event error\n";
-      close(event.data.fd);
-      continue;
+  for (int i = 0; i < FD_SETSIZE; ++i)
+    if (FD_ISSET(i, &clone)) {
+      if (i == m_listening_fd) {
+        accept_new_connection();
+        continue;
+      }
+      User *user = find_user_by_fd(i);
+      if (user)
+        user->handle(*this);
     }
-
-    // If the fd is equal to listening fd then there's a new connection.
-    if (event.data.fd == m_listening_fd) {
-      accept_new_connection();
-      continue;
-    }
-
-    User *user = find_user_by_fd(event.data.fd);
-    if (user)
-      user->handle();
-  }
 
   // Cleanup
   for (std::vector<User *>::iterator it = m_users.begin();
        it != m_users.end();) {
     User *user = *it;
     if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
-      epoll_ctl(m_epoll_fd, EPOLL_CTL_DEL, user->get_fd(), NULL);
       delete user;
       it = m_users.erase(it);
     } else
@@ -142,12 +140,13 @@ void Server::accept_new_connection() {
     return;
   }
 
-  if (!add_socket_to_epoll(fd)) {
-    std::cerr << "Error: Failed to add socket to epoll event.\n";
-    return;
-  }
+  FD_SET(fd, &m_master_fds);
+  // if (!add_socket_to_epoll(fd)) {
+  //   std::cerr << "Error: Failed to add socket to epoll event.\n";
+  //   return;
+  // }
 
-  m_users.push_back(new User(fd));
+  m_users.push_back(new User(fd, host, srv));
 
   return;
 }
@@ -159,11 +158,11 @@ bool Server::make_socket_nonblocking(int fd) {
   return fcntl(fd, F_SETFL, flag | O_NONBLOCK) != -1;
 }
 
-bool Server::add_socket_to_epoll(int fd) {
-  m_epoll_event.data.fd = fd;
-  m_epoll_event.events = EPOLLIN | EPOLLET;
-  return epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &m_epoll_event) != -1;
-}
+// bool Server::add_socket_to_epoll(int fd) {
+//   m_epoll_event.data.fd = fd;
+//   m_epoll_event.events = EPOLLIN | EPOLLET;
+//   return epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &m_epoll_event) != -1;
+// }
 
 User *Server::find_user_by_fd(int fd) {
   for (std::vector<User *>::iterator it = m_users.begin(); it != m_users.end();

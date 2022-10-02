@@ -23,20 +23,34 @@ enum UserStatus {
 
 #define BUFFER_SIZE 4096
 
+class Server;
 class User {
 
 public:
-  User(int fd);
+  User(int fd, const std::string &hostname, const std::string &hostaddr);
   virtual ~User();
 
   int get_fd() const;
   UserStatus get_status() const;
+  const std::string &get_hostname() const;
+  const std::string &get_hostaddr() const;
+  const std::string &get_username() const;
+  const std::string &get_nickname() const;
 
-  void handle();
+
+  void set_username(const std::string &username);
+  void set_nickname(const std::string &nickname);
+
+  void handle(const Server &server);
+  void reply(const std::string &message);
 
 private:
   int m_fd;
   UserStatus m_status;
+  std::string m_hostname;
+  std::string m_hostaddr;
+  std::string m_username;
+  std::string m_nickname;
 };
 
 #endif // __USER_H__
