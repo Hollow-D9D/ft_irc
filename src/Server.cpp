@@ -6,11 +6,12 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 15:42:55 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/02 17:14:30 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.h"
+#include "User.h"
 #include <arpa/inet.h>
 #include <cerrno>
 #include <fcntl.h>
@@ -25,6 +26,12 @@
 Server::Server(int port, std::string password)
     : m_port(port), m_password(password), m_listening_fd(-1), m_epoll_fd(-1),
       m_epoll_event(), m_events() {}
+
+Server::~Server() {
+  for (std::vector<User *>::iterator it = m_users.begin(); it != m_users.end();
+       ++it)
+    delete *it;
+}
 
 int Server::init() {
   if (m_listening_fd != -1)
@@ -72,6 +79,7 @@ int Server::init() {
 }
 
 void Server::handle() {
+
   int n = epoll_wait(m_epoll_fd, m_events, SERVER_MAX_CONNECTIONS, -1);
 
   for (int i = 0; i < n; ++i) {
@@ -87,25 +95,36 @@ void Server::handle() {
 
     // If the fd is equal to listening fd then there's a new connection.
     if (event.data.fd == m_listening_fd) {
-      while (accept_new_connection())
-        ;
+      accept_new_connection();
       continue;
     }
 
-    // Other than that read data from the fd.
-    while (read_from_socket(event.data.fd))
-      ;
+    User *user = find_user_by_fd(event.data.fd);
+    if (user)
+      user->handle();
+  }
+
+  // Cleanup
+  for (std::vector<User *>::iterator it = m_users.begin();
+       it != m_users.end();) {
+    User *user = *it;
+    if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
+      epoll_ctl(m_epoll_fd, EPOLL_CTL_DEL, user->get_fd(), NULL);
+      delete user;
+      it = m_users.erase(it);
+    } else
+      ++it;
   }
 }
 
-bool Server::accept_new_connection() {
+void Server::accept_new_connection() {
   sockaddr in_addr;
   socklen_t in_len = sizeof(in_addr);
   int fd = accept(m_listening_fd, &in_addr, &in_len);
   if (fd == -1) {
     if (!(errno == EAGAIN || errno == EWOULDBLOCK))
       std::cerr << "Error: Failed to accept a new connection.";
-    return false;
+    return;
   }
 
   std::string host(NI_MAXHOST, '\0');
@@ -120,15 +139,17 @@ bool Server::accept_new_connection() {
   if (!make_socket_nonblocking(fd)) {
     std::cerr << "Error: Failed to set file descriptior " << fd
               << " non blocking.\n";
-    return false;
+    return;
   }
 
   if (!add_socket_to_epoll(fd)) {
     std::cerr << "Error: Failed to add socket to epoll event.\n";
-    return false;
+    return;
   }
 
-  return true;
+  m_users.push_back(new User(fd));
+
+  return;
 }
 
 bool Server::make_socket_nonblocking(int fd) {
@@ -144,18 +165,12 @@ bool Server::add_socket_to_epoll(int fd) {
   return epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &m_epoll_event) != -1;
 }
 
-bool Server::read_from_socket(int fd) {
-  char buffer[512];
-  int size = recv(fd, buffer, 512, 0);
-  if (size == -1) {
-    if (errno == EAGAIN)
-      return false;
-  } else if (size == 0) {
-    std::cout << "Info: Closing fd " << fd << ".\n";
-    close(fd);
-    return false;
+User *Server::find_user_by_fd(int fd) {
+  for (std::vector<User *>::iterator it = m_users.begin(); it != m_users.end();
+       ++it) {
+    User *user = *it;
+    if (user->get_fd() == fd)
+      return user;
   }
-
-  std::cout << fd << ": " << buffer << "\n";
-  return true;
+  return NULL;
 }
