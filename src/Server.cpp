@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:31:19 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 02:47:49 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void Server::handle() {
 
       std::map<int, User *>::iterator it = m_users.find(i);
       if (it != m_users.end())
-        it->second->handle(*this);
+        it->second->handle();
     }
 
   // Cleanup
@@ -147,7 +147,7 @@ void Server::accept_new_connection() {
   }
 
   FD_SET(fd, &m_master_fds);
-  m_users[fd] = new User(fd, host, srv);
+  m_users[fd] = new User(*this, fd, host, srv);
   return;
 }
 

@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:33:58 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 02:50:06 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,14 @@
 #include <unistd.h>
 #include <vector>
 
-User::User(int fd, const std::string &hostname, const std::string &hostaddr)
-    : m_fd(fd), m_status(USER_STATUS_PASSWORD), m_hostname(hostname),
-      m_hostaddr(hostaddr) {}
+User::User(Server &server, int fd, const std::string &hostname,
+           const std::string &hostaddr)
+    : m_server(server), m_fd(fd), m_status(USER_STATUS_PASSWORD),
+      m_hostname(hostname), m_hostaddr(hostaddr) {}
 
 User::~User() {}
+
+Server &User::get_server() { return m_server; }
 
 int User::get_fd() const { return m_fd; }
 
@@ -72,7 +75,14 @@ void User::send_to(User &user, const std::string &message) {
   user.write(":" + get_prefix() + " " + message);
 }
 
-void User::handle(Server &server) {
+void User::broadcast(const std::string &message) {
+  std::map<int, User *> &users = m_server.get_users();
+  for (std::map<int, User *>::iterator it = users.begin(); it != users.end();
+       ++it)
+    send_to(*(it->second), message);
+}
+
+void User::handle() {
 
   if (m_status == USER_STATUS_DISCONNECTED)
     return;
@@ -92,13 +102,13 @@ void User::handle(Server &server) {
   message.erase(std::remove(message.begin(), message.end(), '\n'),
                 message.end());
 
-  Command command(server, *this, message);
+  Command command(m_server, *this, message);
   const std::map<std::string, CommandHandlerCallback> &commands =
-      server.get_commands();
+      m_server.get_commands();
   std::map<std::string, CommandHandlerCallback>::const_iterator it =
       commands.find(command.get_prefix());
   if (it != commands.end()) {
-    std::cout << "Calling " << command.get_prefix() << "\n";
+
     it->second(command);
   }
 

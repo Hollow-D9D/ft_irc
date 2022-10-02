@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 02:23:43 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:36:28 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 02:49:08 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,6 @@ void NICK(Command &command) {
   if (arguments.empty() || sender.get_status() != USER_STATUS_REGISTER)
     return;
 
-  std::string nick = "NICK :" + arguments[0];
-  Server &server = command.get_server();
-  std::map<int, User *> &users = server.get_users();
-  for (std::map<int, User *>::iterator it = users.begin(); it != users.end();
-       ++it)
-    sender.send_to(*(it->second), nick);
-
+  sender.broadcast("NICK :" + arguments[0]);
   sender.set_nickname(arguments[0]);
 }
