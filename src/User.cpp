@@ -6,13 +6,14 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 23:33:54 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/02 23:38:36 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.h"
 #include "Command.h"
 #include "Server.h"
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <sys/socket.h>
@@ -61,7 +62,7 @@ void User::handle(const Server &server) {
 
   std::string message(buffer, size);
   message.erase(std::remove(message.begin(), message.end(), '\n'),
-                message.cend());
+                message.end());
 
   Command command(message);
 
