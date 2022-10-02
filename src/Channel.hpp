@@ -3,7 +3,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
-#include "../User/User.hpp"
+#include "User.hpp"
 
 class User;
 
