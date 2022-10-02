@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/02 15:20:33 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/02 15:42:55 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,11 @@ int Server::init() {
   // Bind the socket to IP/PORT
   sockaddr_in hint;
   hint.sin_family = AF_INET;
-  hint.sin_port = m_port;
-  inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
+  hint.sin_port = htons(m_port);
+  hint.sin_addr.s_addr = INADDR_ANY;
 
   if (bind(m_listening_fd, (sockaddr *)&hint, sizeof(hint)) == -1)
     throw std::runtime_error("Failed to bind IP/Port to the socket.");
-
-  // Start listening to the socket
-  if (listen(m_listening_fd, SOMAXCONN) == -1)
-    throw std::runtime_error("Failed to listen.");
 
   // Create epoll file descriptor
   m_epoll_fd = epoll_create1(0);
@@ -66,6 +62,10 @@ int Server::init() {
   if (!add_socket_to_epoll(m_listening_fd))
     throw std::runtime_error("Failed to set flags for epoll.");
 
+  // Start listening to the socket
+  if (listen(m_listening_fd, SOMAXCONN) == -1)
+    throw std::runtime_error("Failed to listen.");
+
   std::cout << "Listening to 0.0.0.0:" << m_port << "\n";
 
   return 0;
@@ -73,6 +73,7 @@ int Server::init() {
 
 void Server::handle() {
   int n = epoll_wait(m_epoll_fd, m_events, SERVER_MAX_CONNECTIONS, -1);
+
   for (int i = 0; i < n; ++i) {
     epoll_event &event = m_events[i];
 
@@ -143,4 +144,18 @@ bool Server::add_socket_to_epoll(int fd) {
   return epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &m_epoll_event) != -1;
 }
 
-bool Server::read_from_socket(int fd) {}
+bool Server::read_from_socket(int fd) {
+  char buffer[512];
+  int size = recv(fd, buffer, 512, 0);
+  if (size == -1) {
+    if (errno == EAGAIN)
+      return false;
+  } else if (size == 0) {
+    std::cout << "Info: Closing fd " << fd << ".\n";
+    close(fd);
+    return false;
+  }
+
+  std::cout << fd << ": " << buffer << "\n";
+  return true;
+}
