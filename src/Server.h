@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 11:12:42 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:45:27 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ public:
   int get_port() const;
 
   const std::map<std::string, CommandHandlerCallback> get_commands() const;
+
   std::map<int, User *> &get_users();
+  User *find_user_by_nickname(const std::string &nickname);
 
 private:
   void accept_new_connection();
