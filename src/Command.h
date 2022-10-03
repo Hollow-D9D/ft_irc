@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:18 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 13:09:58 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 21:07:57 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ public:
   const std::string &get_message() const;
   const std::vector<std::string> &get_arguments() const;
   const std::string &get_prefix() const;
+  const std::string &get_raw() const;
   User &get_sender();
   Server &get_server();
 
@@ -34,7 +35,7 @@ private:
   User &m_sender;
   std::vector<std::string> m_arguments;
   std::string m_message;
-  std::string m_trailer;
+  std::string m_raw;
   std::string m_prefix;
 };
 

@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:18:13 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 21:45:31 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define __USER_H__
 #include <ctime>
 #include <string>
+#include <vector>
 
 enum UserStatus {
   USER_STATUS_PASSWORD,
@@ -25,6 +26,7 @@ enum UserStatus {
 #define BUFFER_SIZE 4096
 
 class Server;
+class Command;
 class User {
 
 public:
@@ -65,6 +67,9 @@ public:
   void set_last_ping(time_t last_ping);
 
 private:
+  void parse_messages();
+
+private:
   Server &m_server;
   int m_fd;
   UserStatus m_status;
@@ -72,8 +77,9 @@ private:
   std::string m_hostaddr;
   std::string m_username;
   std::string m_nickname;
-  time_t m_last_ping;
   std::string m_realname;
+  time_t m_last_ping;
+  std::vector<Command *> m_queued_commands;
 };
 
 #endif // __USER_H__

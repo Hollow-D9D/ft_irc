@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 20:57:18 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 22:06:30 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,20 @@ void PASS(Command &command);
 void NICK(Command &command);
 void USER(Command &command);
 void PING(Command &command);
+void CAP(Command &command);
+void JOIN(Command &command);
+void KICK(Command &command);
+void PONG(Command &command);
+void PRIVMSG(Command &command);
 
 Server::Server(int port, const std::string &password)
     : m_port(port), m_password(password), m_listening_fd(-1) {
+  m_commands["CAP"] = CAP;
+  m_commands["JOIN"] = JOIN;
+  m_commands["KICK"] = KICK;
+  m_commands["PONG"] = PONG;
+  m_commands["PRIVMSG"] = PRIVMSG;
+  m_commands["NICK"] = NICK;
   m_commands["PASS"] = PASS;
   m_commands["NICK"] = NICK;
   m_commands["USER"] = USER;
@@ -94,10 +105,9 @@ int Server::init() {
   return 0;
 }
 
-User *Server::get_user(std::string &name)
-{
-  for (std::map<int, User *>::iterator it = m_users.begin(); it != m_users.end(); ++it)
-  {
+User *Server::get_user(std::string &name) {
+  for (std::map<int, User *>::iterator it = m_users.begin();
+       it != m_users.end(); ++it) {
     if ((*it).second->get_nickname() == name)
       return (*it).second;
   }

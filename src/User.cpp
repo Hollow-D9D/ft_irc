@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:37:07 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 22:03:55 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 #include "Command.h"
 #include "Response.h"
 #include "Server.h"
+#include "Utilities.h"
 #include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -77,6 +79,7 @@ void User::set_realname(const std::string &realname) { m_realname = realname; }
 void User::set_status(UserStatus status) { m_status = status; }
 
 void User::write(const std::string &message) {
+  std::cout << "> " << message << "\n";
   std::string formatted = message + "\r\n";
   send(m_fd, formatted.data(), formatted.size(), 0);
 }
@@ -94,10 +97,7 @@ void User::broadcast(const std::string &message) {
 
 void User::set_last_ping(time_t last_ping) { m_last_ping = last_ping; }
 
-void User::handle() {
-
-  if (m_status == USER_STATUS_DISCONNECTED)
-    return;
+void User::parse_messages() {
 
   char buffer[BUFFER_SIZE];
   int size = recv(m_fd, buffer, BUFFER_SIZE, 0);
@@ -110,19 +110,35 @@ void User::handle() {
     return;
   }
 
-  std::string message(buffer, size);
-  message.erase(std::remove(message.begin(), message.end(), '\n'),
-                message.end());
+  buffer[size] = '\0';
 
-  Command command(m_server, *this, message);
+  char *token = std::strtok(buffer, "\r\n");
+  while (token != NULL) {
+    std::cout << "< " << token << "\n";
+    m_queued_commands.push_back(
+        new Command(m_server, *this, std::string(token)));
+    token = std::strtok(NULL, "\r\n");
+  }
+}
+
+void User::handle() {
+
+  if (m_status == USER_STATUS_DISCONNECTED)
+    return;
+
+  parse_messages();
 
   const std::map<std::string, CommandHandlerCallback> &commands =
       m_server.get_commands();
-  std::map<std::string, CommandHandlerCallback>::const_iterator it =
-      commands.find(command.get_prefix());
-  if (it != commands.end()) {
-    std::cout << "Command called: " << command.get_prefix() << "\n";
-    it->second(command);
+  while (!m_queued_commands.empty()) {
+    Command *command = m_queued_commands[0];
+    std::map<std::string, CommandHandlerCallback>::const_iterator it =
+        commands.find(command->get_prefix());
+    if (it != commands.end()) {
+      it->second(*command);
+    }
+    delete command;
+    m_queued_commands.erase(m_queued_commands.begin());
   }
 
   if (!m_nickname.empty() && !m_realname.empty()) {
