@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Command.h"
-#include "Server.h"
-#include "User.h"
+#include "../Command.h"
+#include "../Server.h"
+#include "../User.h"
 
 void PASS(Command &command) {
   User &sender = command.get_sender();

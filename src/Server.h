@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:27:39 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:08:26 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 class User;
 class Command;
+class Channel;
 
 typedef void (*CommandHandlerCallback)(Command &);
 
@@ -38,6 +39,10 @@ public:
   const std::map<std::string, CommandHandlerCallback> get_commands() const;
   std::map<int, User *> &get_users();
 
+  bool is_channel(std::string const &name);
+  Channel &get_channel(std::string &name);
+  std::vector<Channel *> get_channels();
+
 private:
   void accept_new_connection();
   bool make_socket_nonblocking(int fd);
@@ -50,6 +55,7 @@ private:
 
   std::map<int, User *> m_users;
   std::map<std::string, CommandHandlerCallback> m_commands;
+  std::map<std::string, Channel> channels;
 };
 
 #endif // __SERVER_H__

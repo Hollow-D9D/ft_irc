@@ -10,11 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "User.h"
-#include "Command.h"
-#include "Server.h"
+#include "../User.h"
+#include "../Command.h"
+#include "../Server.h"
 
 void USER(Command &command) {
-  (void)command;
-  // TODO: Work on this.
+  const std::vector<std::string> &arguments = command.get_arguments();
+  User &sender = command.get_sender();
+  if (arguments.empty() || arguments.size() < 3 || sender.get_status() != USER_STATUS_REGISTER )
+    return ;
+  sender.set_username(arguments[0]);
+  sender.broadcast("USER :" + arguments[0]);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:48:15 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 12:01:43 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ public:
   void set_hostname(const std::string &hostname);
   void set_hostaddr(const std::string &hostaddr);
   void set_status(UserStatus status);
-
+  
   void handle();
   void write(const std::string &message);
   void send_to(User &user, const std::string &message);

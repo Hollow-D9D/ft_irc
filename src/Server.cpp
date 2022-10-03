@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:47:49 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 12:08:25 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.h"
 #include "Command.h"
 #include "User.h"
+#include "Channel.hpp"
 #include <arpa/inet.h>
 #include <cerrno>
 #include <fcntl.h>
@@ -156,4 +157,28 @@ bool Server::make_socket_nonblocking(int fd) {
   if (flag == -1)
     return false;
   return fcntl(fd, F_SETFL, flag | O_NONBLOCK) != -1;
+}
+
+
+bool Server::is_channel(std::string const &name){
+  return channels.count(name);
+}
+
+std::vector<Channel *> Server::get_channels(){
+  std::map<std::string, Channel>::iterator it;
+  std::vector<Channel *> channels;
+  for (it = this->channels.begin(); it != this->channels.end(); ++it)
+    channels.push_back(&(*it).second);
+  return channels;
+}
+
+Channel &Server::get_channel(std::string &name)
+{
+  Channel &channel = this->channels[name];
+  if (is_channel(name))
+  {
+    channel.setName(name);
+    // display channel
+  }
+  return (channel);
 }
