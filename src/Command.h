@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:18 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:32:06 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 13:09:58 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ public:
   const std::string &get_prefix() const;
   User &get_sender();
   Server &get_server();
+
+  std::string to_string() const;
 
 private:
   Server &m_server;

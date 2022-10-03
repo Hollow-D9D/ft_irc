@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:16 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:20:39 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 15:35:00 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,27 @@ User &Command::get_sender() { return m_sender; }
 
 Server &Command::get_server() { return m_server; }
 
+std::string Command::to_string() const {
+  std::string result = m_prefix;
+
+  for (std::vector<std::string>::const_iterator it = m_arguments.begin();
+       it != m_arguments.end(); ++it)
+    result += " " + *it;
+
+  if (!m_message.empty())
+    result += " : " + m_message;
+
+  return result;
+}
+
 Command::Command(Server &server, User &sender, std::string message)
     : m_server(server), m_sender(sender) {
 
   size_t pos = message.find(":");
   if (pos != std::string::npos) {
-    std::string tmp = message.substr(0, pos);
-    message.erase(0, pos + 1);
-    m_trailer = message;
-    m_message = tmp;
+    std::string temp = message.substr(0, pos);
+    m_message = message.substr(pos + 1);
+    message = temp;
   }
 
   std::stringstream ssin(message);

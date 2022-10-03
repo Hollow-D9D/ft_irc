@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 02:23:43 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 12:02:05 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 12:37:43 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static bool is_valid_nickname(const std::string &nickname) {
   if (!std::isalpha(nickname[0]))
     return false;
   for (size_t i = 1; i < nickname.size(); ++i)
-    if (!std::isalnum(nickname[i]) || !isspecial(nickname[i]) ||
+    if (!std::isalnum(nickname[i]) && !isspecial(nickname[i]) &&
         nickname[i] != '-')
       return false;
   return true;

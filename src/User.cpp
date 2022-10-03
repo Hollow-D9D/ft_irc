@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:01:21 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 15:37:07 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ const std::string &User::get_username() const { return m_username; }
 
 const std::string &User::get_nickname() const { return m_nickname; }
 
+const std::string &User::get_realname() const { return m_realname; }
+
 const std::string &User::get_host() const {
   return m_hostname.empty() ? m_hostaddr : m_hostname;
 }
@@ -60,6 +62,8 @@ std::string User::get_prefix() const {
   return prefix;
 }
 
+std::time_t User::get_last_ping() const { return m_last_ping; }
+
 void User::set_username(const std::string &username) { m_username = username; }
 
 void User::set_nickname(const std::string &nickname) { m_nickname = nickname; }
@@ -67,6 +71,8 @@ void User::set_nickname(const std::string &nickname) { m_nickname = nickname; }
 void User::set_hostname(const std::string &hostname) { m_hostname = hostname; }
 
 void User::set_hostaddr(const std::string &hostaddr) { m_hostaddr = hostaddr; }
+
+void User::set_realname(const std::string &realname) { m_realname = realname; }
 
 void User::set_status(UserStatus status) { m_status = status; }
 
@@ -85,6 +91,8 @@ void User::broadcast(const std::string &message) {
        ++it)
     send_to(*(it->second), message);
 }
+
+void User::set_last_ping(time_t last_ping) { m_last_ping = last_ping; }
 
 void User::handle() {
 
@@ -107,51 +115,36 @@ void User::handle() {
                 message.end());
 
   Command command(m_server, *this, message);
+
   const std::map<std::string, CommandHandlerCallback> &commands =
       m_server.get_commands();
   std::map<std::string, CommandHandlerCallback>::const_iterator it =
       commands.find(command.get_prefix());
   if (it != commands.end()) {
-
+    std::cout << "Command called: " << command.get_prefix() << "\n";
     it->second(command);
   }
 
-  // std::string password;
-
-  // switch (m_status) {
-  //   case USER_STATUS_PASSWORD:
-
-  //   if (message.find("PASS", 0) != 0)
-  //     break;
-
-  //   std::cout << "'" << message.substr(5) << "' '" << server.get_password()
-  //   << "'\n";
-
-  //   if (message.substr(5) != server.get_password()) {
-  //     m_status = USER_STATUS_REGISTER;
-  //   }
-
-  //   break;
-
-  //   case USER_STATUS_REGISTER:
-
-  //   if (message.find("USER", 0) == 0)
-  //     set_username(message.substr(5));
-
-  //   if (message.find("NICK", 0) == 0)
-  //     set_nickname(message.substr(5));
-
-  //   if (!m_nickname.empty() && !m_username.empty()) {
-  //     m_status = USER_STATUS_ONLINE;
-  //     write("Welcome!");
-  //   }
-
-  //   break;
-
-  //   default:
-  //   break;
-  // }
-
-  // std::cout << m_hostname << "@" << m_hostaddr << " " << message << "\n";
+  if (!m_nickname.empty() && !m_realname.empty()) {
+    m_status = USER_STATUS_ONLINE;
+    reply(001, m_username);
+    reply(002, m_hostname, "1.0");
+    reply(003, m_server.get_created_at_formatted());
+    reply(004, "ft_irc", "1.0");
+  }
 }
 
+void User::reply(int code, const std::string &arg0, const std::string &arg1,
+                 const std::string &arg2, const std::string &arg3,
+                 const std::string &arg4, const std::string &arg5,
+                 const std::string &arg6) {
+  std::ostringstream stream;
+  std::string target =
+      m_status == USER_STATUS_PASSWORD || m_status == USER_STATUS_REGISTER
+          ? "*"
+          : m_nickname;
+  stream << ":server " << std::dec << code << " " << target << " "
+         << Response::code_to_response(code, arg0, arg1, arg2, arg3, arg4, arg5,
+                                       arg6);
+  write(stream.str());
+}

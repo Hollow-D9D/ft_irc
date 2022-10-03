@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 14:59:03 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 15:37:36 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.h"
+#include "Channel.hpp"
 #include "Command.h"
 #include "User.h"
-#include "Channel.hpp"
 #include <arpa/inet.h>
 #include <cerrno>
 #include <fcntl.h>
@@ -27,11 +27,15 @@
 
 void PASS(Command &command);
 void NICK(Command &command);
+void USER(Command &command);
+void PING(Command &command);
 
 Server::Server(int port, const std::string &password)
     : m_port(port), m_password(password), m_listening_fd(-1) {
   m_commands["PASS"] = PASS;
   m_commands["NICK"] = NICK;
+  m_commands["USER"] = USER;
+  m_commands["PING"] = PING;
 }
 
 Server::~Server() {
@@ -152,6 +156,16 @@ void Server::accept_new_connection() {
   return;
 }
 
+std::time_t Server::get_created_at() const { return m_created_at; }
+
+std::string Server::get_created_at_formatted() const {
+  char buffer[256];
+  tm *timeinfo = localtime(&m_created_at);
+  size_t size =
+      strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S %Y", timeinfo);
+  return std::string(buffer, size);
+}
+
 bool Server::make_socket_nonblocking(int fd) {
   int flag = fcntl(fd, F_GETFL, 0);
   if (flag == -1)
@@ -159,12 +173,11 @@ bool Server::make_socket_nonblocking(int fd) {
   return fcntl(fd, F_SETFL, flag | O_NONBLOCK) != -1;
 }
 
-
-bool Server::is_channel(std::string const &name){
+bool Server::is_channel(std::string const &name) const {
   return channels.count(name);
 }
 
-std::vector<Channel *> Server::get_channels(){
+std::vector<Channel *> Server::get_channels() {
   std::map<std::string, Channel>::iterator it;
   std::vector<Channel *> channels;
   for (it = this->channels.begin(); it != this->channels.end(); ++it)
@@ -172,13 +185,19 @@ std::vector<Channel *> Server::get_channels(){
   return channels;
 }
 
-Channel &Server::get_channel(std::string &name)
-{
+Channel &Server::get_channel(std::string &name) {
   Channel &channel = this->channels[name];
-  if (is_channel(name))
-  {
+  if (is_channel(name)) {
     channel.setName(name);
     // display channel
   }
   return (channel);
+}
+
+User *Server::find_user_by_nickname(const std::string &nickname) const {
+  for (std::map<int, User *>::const_iterator it = m_users.begin();
+       it != m_users.end(); ++it)
+    if (it->second->get_nickname() == nickname)
+      return it->second;
+  return NULL;
 }

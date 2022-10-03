@@ -15,3 +15,5 @@ Creating a TCP Server in C++: https://www.youtube.com/watch?v=cNdlrbZSkyQ
 ~~epoll(7) — Linux manual page: https://man7.org/linux/man-pages/man7/epoll.7.html~~ (doesn't work on Mac)
 
 select(2) — Linux manual page: https://man7.org/linux/man-pages/man2/select.2.html
+
+Internet Relay Chat Protocol Documentation: https://dd.ircdocs.horse/refs/commands/nick
