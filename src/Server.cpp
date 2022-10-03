@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 22:06:30 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 22:15:12 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,10 +187,7 @@ std::string Server::get_created_at_formatted() const {
 }
 
 bool Server::make_socket_nonblocking(int fd) {
-  int flag = fcntl(fd, F_GETFL, 0);
-  if (flag == -1)
-    return false;
-  return fcntl(fd, F_SETFL, flag | O_NONBLOCK) != -1;
+  return fcntl(fd, F_SETFL, O_NONBLOCK) != -1;
 }
 
 bool Server::is_channel(std::string const &name) const {

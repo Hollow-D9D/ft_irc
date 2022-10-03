@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 22:03:55 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 22:15:38 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include "Command.h"
 #include "Response.h"
 #include "Server.h"
-#include "Utilities.h"
 #include <algorithm>
 #include <cstring>
 #include <iostream>
