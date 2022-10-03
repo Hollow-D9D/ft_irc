@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 11:12:49 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:46:23 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,14 @@ int Server::get_port() const { return m_port; }
 const std::map<std::string, CommandHandlerCallback>
 Server::get_commands() const {
   return m_commands;
+}
+
+User *Server::find_user_by_nickname(const std::string &nickname) {
+  for (std::map<int, User *>::iterator it = m_users.begin();
+       it != m_users.end(); ++it)
+    if (it->second->get_nickname() == nickname)
+      return it->second;
+  return NULL;
 }
 
 std::map<int, User *> &Server::get_users() { return m_users; }
