@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:37:36 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 20:57:18 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,16 @@ int Server::init() {
   std::cout << "Listening to 0.0.0.0:" << m_port << "\n";
 
   return 0;
+}
+
+User *Server::get_user(std::string &name)
+{
+  for (std::map<int, User *>::iterator it = m_users.begin(); it != m_users.end(); ++it)
+  {
+    if ((*it).second->get_nickname() == name)
+      return (*it).second;
+  }
+  return NULL;
 }
 
 void Server::handle() {

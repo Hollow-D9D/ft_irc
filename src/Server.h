@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:14:55 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 20:57:26 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ public:
   const std::map<std::string, CommandHandlerCallback> get_commands() const;
 
   std::map<int, User *> &get_users();
+  User *get_user(std::string &name);
 
   bool is_channel(std::string const &name) const;
   std::vector<Channel *> get_channels();
