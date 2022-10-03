@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 20:57:26 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 23:42:53 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ private:
 
   std::map<int, User *> m_users;
   std::map<std::string, CommandHandlerCallback> m_commands;
-  std::map<std::string, Channel> channels;
+  std::map<std::string, Channel> m_channels;
 };
 
 #endif // __SERVER_H__

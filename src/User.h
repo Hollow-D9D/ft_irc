@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 21:45:31 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 23:48:05 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ public:
   const Server &get_server() const;
   int get_fd() const;
   UserStatus get_status() const;
+  UserStatus get_previous_status() const;
   const std::string &get_hostname() const;
   const std::string &get_hostaddr() const;
   const std::string &get_username() const;
@@ -66,6 +67,8 @@ public:
   // for pong cmd
   void set_last_ping(time_t last_ping);
 
+  bool operator==(const User &other) const;
+
 private:
   void parse_messages();
 
@@ -73,6 +76,7 @@ private:
   Server &m_server;
   int m_fd;
   UserStatus m_status;
+  UserStatus m_previous_status;
   std::string m_hostname;
   std::string m_hostaddr;
   std::string m_username;

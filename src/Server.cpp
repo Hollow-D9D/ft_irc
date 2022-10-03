@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 22:15:12 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 23:46:07 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,16 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void PASS(Command &command);
-void NICK(Command &command);
-void USER(Command &command);
-void PING(Command &command);
-void CAP(Command &command);
-void JOIN(Command &command);
-void KICK(Command &command);
-void PONG(Command &command);
-void PRIVMSG(Command &command);
+void PASS(Command &);
+void NICK(Command &);
+void USER(Command &);
+void PING(Command &);
+void CAP(Command &);
+void JOIN(Command &);
+void KICK(Command &);
+void PONG(Command &);
+void PRIVMSG(Command &);
+void QUIT(Command &);
 
 Server::Server(int port, const std::string &password)
     : m_port(port), m_password(password), m_listening_fd(-1) {
@@ -47,6 +48,7 @@ Server::Server(int port, const std::string &password)
   m_commands["NICK"] = NICK;
   m_commands["USER"] = USER;
   m_commands["PING"] = PING;
+  m_commands["QUIT"] = QUIT;
 }
 
 Server::~Server() {
@@ -139,6 +141,15 @@ void Server::handle() {
        it != m_users.end();) {
     User *user = it->second;
     if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
+      for (std::map<std::string, Channel>::iterator it = m_channels.begin();
+           it != m_channels.end();) {
+        if (it->second.isUser(*user))
+          it->second.eraseUser(user->get_nickname());
+        if (it->second.getUsers().empty())
+          m_channels.erase(it++);
+        else
+          ++it;
+      }
       delete user;
       m_users.erase(it++);
     } else
@@ -191,19 +202,19 @@ bool Server::make_socket_nonblocking(int fd) {
 }
 
 bool Server::is_channel(std::string const &name) const {
-  return channels.count(name);
+  return m_channels.count(name);
 }
 
 std::vector<Channel *> Server::get_channels() {
   std::map<std::string, Channel>::iterator it;
   std::vector<Channel *> channels;
-  for (it = this->channels.begin(); it != this->channels.end(); ++it)
+  for (it = m_channels.begin(); it != m_channels.end(); ++it)
     channels.push_back(&(*it).second);
   return channels;
 }
 
 Channel &Server::get_channel(std::string &name) {
-  Channel &channel = this->channels[name];
+  Channel &channel = m_channels[name];
   if (is_channel(name)) {
     channel.setName(name);
     // display channel

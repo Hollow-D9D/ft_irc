@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 22:15:38 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 23:49:52 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "Server.h"
 #include <algorithm>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -37,6 +38,8 @@ const Server &User::get_server() const { return m_server; }
 int User::get_fd() const { return m_fd; }
 
 UserStatus User::get_status() const { return m_status; }
+
+UserStatus User::get_previous_status() const { return m_previous_status; }
 
 const std::string &User::get_hostname() const { return m_hostname; }
 
@@ -75,10 +78,13 @@ void User::set_hostaddr(const std::string &hostaddr) { m_hostaddr = hostaddr; }
 
 void User::set_realname(const std::string &realname) { m_realname = realname; }
 
-void User::set_status(UserStatus status) { m_status = status; }
+void User::set_status(UserStatus status) {
+  m_previous_status = m_status;
+  m_status = status;
+}
 
 void User::write(const std::string &message) {
-  std::cout << "> " << message << "\n";
+  std::cout << "(" << m_fd << ")> " << message << "\n";
   std::string formatted = message + "\r\n";
   send(m_fd, formatted.data(), formatted.size(), 0);
 }
@@ -95,6 +101,8 @@ void User::broadcast(const std::string &message) {
 }
 
 void User::set_last_ping(time_t last_ping) { m_last_ping = last_ping; }
+
+bool User::operator==(const User &other) const { return m_fd == other.m_fd; }
 
 void User::parse_messages() {
 
@@ -113,7 +121,7 @@ void User::parse_messages() {
 
   char *token = std::strtok(buffer, "\r\n");
   while (token != NULL) {
-    std::cout << "< " << token << "\n";
+    std::cout << "(" << m_fd << ")< " << token << "\n";
     m_queued_commands.push_back(
         new Command(m_server, *this, std::string(token)));
     token = std::strtok(NULL, "\r\n");
@@ -140,12 +148,15 @@ void User::handle() {
     m_queued_commands.erase(m_queued_commands.begin());
   }
 
-  if (!m_nickname.empty() && !m_realname.empty()) {
-    m_status = USER_STATUS_ONLINE;
+  if (m_status == USER_STATUS_REGISTER && !m_nickname.empty() &&
+      !m_realname.empty())
+    set_status(USER_STATUS_ONLINE);
+
+  if (m_status != m_previous_status && m_status == USER_STATUS_ONLINE) {
     reply(001, m_username);
     reply(002, m_hostname, "1.0");
     reply(003, m_server.get_created_at_formatted());
-    reply(004, "ft_irc", "1.0");
+    reply(004, "ft_irc", "1.0", "aiwro", "Oovimnptkl");
   }
 }
 
@@ -158,7 +169,8 @@ void User::reply(int code, const std::string &arg0, const std::string &arg1,
       m_status == USER_STATUS_PASSWORD || m_status == USER_STATUS_REGISTER
           ? "*"
           : m_nickname;
-  stream << ":server " << std::dec << code << " " << target << " "
+  stream << ":server " << std::setfill('0') << std::setw(3) << code << " "
+         << target << " "
          << Response::code_to_response(code, arg0, arg1, arg2, arg3, arg4, arg5,
                                        arg6);
   write(stream.str());
