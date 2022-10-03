@@ -6,7 +6,7 @@
 /*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 12:01:43 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 15:02:46 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ public:
   virtual ~User();
 
   Server &get_server();
+  const Server &get_server() const;
   int get_fd() const;
   UserStatus get_status() const;
   const std::string &get_hostname() const;
@@ -48,9 +49,16 @@ public:
   void set_status(UserStatus status);
   
   void handle();
+  void reply(int code, const std::string &arg0 = "",
+             const std::string &arg1 = "", const std::string &arg2 = "",
+             const std::string &arg3 = "", const std::string &arg4 = "",
+             const std::string &arg5 = "", const std::string &arg6 = "");
   void write(const std::string &message);
   void send_to(User &user, const std::string &message);
   void broadcast(const std::string &message);
+
+  //for pong cmd
+  void set_last_ping(time_t last_ping);
 
 private:
   Server &m_server;
@@ -60,6 +68,7 @@ private:
   std::string m_hostaddr;
   std::string m_username;
   std::string m_nickname;
+  time_t last_ping;
 };
 
 #endif // __USER_H__

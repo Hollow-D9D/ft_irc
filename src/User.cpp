@@ -6,15 +6,17 @@
 /*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 12:01:28 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 15:01:21 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.h"
 #include "Command.h"
+#include "Response.h"
 #include "Server.h"
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -28,6 +30,8 @@ User::User(Server &server, int fd, const std::string &hostname,
 User::~User() {}
 
 Server &User::get_server() { return m_server; }
+
+const Server &User::get_server() const { return m_server; }
 
 int User::get_fd() const { return m_fd; }
 
@@ -111,6 +115,7 @@ void User::handle() {
 
     it->second(command);
   }
+
   // std::string password;
 
   // switch (m_status) {
@@ -149,3 +154,4 @@ void User::handle() {
 
   // std::cout << m_hostname << "@" << m_hostaddr << " " << message << "\n";
 }
+

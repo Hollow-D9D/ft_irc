@@ -6,7 +6,7 @@
 /*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 12:10:59 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/03 12:35:21 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 14:23:13 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,21 @@ void KICK(Command &cmd)
     for (it = channels.begin(); it != channels.end(); ++it)
     {
         if (!cmd.get_server().is_channel(*it))
+        {
+            cmd.get_sender().reply(403, *it);
             continue;
+        }
         Channel &channel = cmd.get_server().get_channel(*it);
         std::vector<std::string>::iterator it2;
         for (it2 = users.begin(); it2 != users.end(); ++it2)
         {
             if (!channel.inChannel(*it2))
+            {
+                cmd.get_sender().reply(441, *it2, *it);
                 continue;
+            }
             channel.broadcast(cmd.get_sender(), "KICK :" + *it + " " + *it2 + " :" + arguments[2]);
             channel.eraseUser(*it2);
         }
     }
-    
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PASS.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 02:16:14 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:21:49 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 14:47:05 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@
 void PASS(Command &command) {
   User &sender = command.get_sender();
   const std::vector<std::string> &arguments = command.get_arguments();
+  if (sender.get_status() != USER_STATUS_REGISTER)
+    return;
+
+  if (arguments.empty() || arguments[0].empty()) {
+    sender.reply(431);
+    return;
+  }
   if (arguments.empty() || sender.get_status() != USER_STATUS_PASSWORD)
     return;
 
