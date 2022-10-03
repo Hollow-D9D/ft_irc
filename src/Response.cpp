@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 02:01:32 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 11:28:42 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:31:57 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,17 @@ std::string RPL_MYINFO(const std::string &server_name,
 
 std::string code_to_response(int code, const std::string &arg0,
                              const std::string &arg1, const std::string &arg2,
-                             const std::string &arg3) {
+                             const std::string &arg3, const std::string &arg4,
+                             const std::string &arg5, const std::string &arg6) {
   // TODO: Work on this.
   (void)code;
   (void)arg0;
   (void)arg1;
   (void)arg2;
   (void)arg3;
+  (void)arg4;
+  (void)arg5;
+  (void)arg6;
   return "";
 }
 

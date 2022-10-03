@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 11:27:10 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:31:15 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ public:
   void handle();
   void reply(int code, const std::string &arg0 = "",
              const std::string &arg1 = "", const std::string &arg2 = "",
-             const std::string &arg3 = "");
+             const std::string &arg3 = "", const std::string &arg4 = "",
+             const std::string &arg5 = "", const std::string &arg6 = "");
   void write(const std::string &message);
   void send_to(User &user, const std::string &message);
   void broadcast(const std::string &message);

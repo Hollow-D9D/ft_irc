@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 11:27:48 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:32:06 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,13 +118,16 @@ void User::handle() {
 }
 
 void User::reply(int code, const std::string &arg0, const std::string &arg1,
-                 const std::string &arg2, const std::string &arg3) {
+                 const std::string &arg2, const std::string &arg3,
+                 const std::string &arg4, const std::string &arg5,
+                 const std::string &arg6) {
   std::ostringstream stream;
   std::string target =
       m_status == USER_STATUS_PASSWORD || m_status == USER_STATUS_REGISTER
           ? "*"
           : m_nickname;
   stream << ":server " << std::dec << code << " " << target << " "
-         << Response::code_to_response(code, arg0, arg1, arg2, arg3);
+         << Response::code_to_response(code, arg0, arg1, arg2, arg3, arg4, arg5,
+                                       arg6);
   write(stream.str());
 }
