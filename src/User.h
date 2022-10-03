@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:48:15 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:27:10 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ public:
   virtual ~User();
 
   Server &get_server();
+  const Server &get_server() const;
   int get_fd() const;
   UserStatus get_status() const;
   const std::string &get_hostname() const;
@@ -48,6 +49,9 @@ public:
   void set_status(UserStatus status);
 
   void handle();
+  void reply(int code, const std::string &arg0 = "",
+             const std::string &arg1 = "", const std::string &arg2 = "",
+             const std::string &arg3 = "");
   void write(const std::string &message);
   void send_to(User &user, const std::string &message);
   void broadcast(const std::string &message);

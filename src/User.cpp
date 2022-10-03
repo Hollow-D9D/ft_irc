@@ -6,15 +6,17 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:50:06 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:27:48 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "User.h"
 #include "Command.h"
+#include "Response.h"
 #include "Server.h"
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -28,6 +30,8 @@ User::User(Server &server, int fd, const std::string &hostname,
 User::~User() {}
 
 Server &User::get_server() { return m_server; }
+
+const Server &User::get_server() const { return m_server; }
 
 int User::get_fd() const { return m_fd; }
 
@@ -111,42 +115,16 @@ void User::handle() {
 
     it->second(command);
   }
+}
 
-  // std::string password;
-
-  // switch (m_status) {
-  //   case USER_STATUS_PASSWORD:
-
-  //   if (message.find("PASS", 0) != 0)
-  //     break;
-
-  //   std::cout << "'" << message.substr(5) << "' '" << server.get_password()
-  //   << "'\n";
-
-  //   if (message.substr(5) != server.get_password()) {
-  //     m_status = USER_STATUS_REGISTER;
-  //   }
-
-  //   break;
-
-  //   case USER_STATUS_REGISTER:
-
-  //   if (message.find("USER", 0) == 0)
-  //     set_username(message.substr(5));
-
-  //   if (message.find("NICK", 0) == 0)
-  //     set_nickname(message.substr(5));
-
-  //   if (!m_nickname.empty() && !m_username.empty()) {
-  //     m_status = USER_STATUS_ONLINE;
-  //     write("Welcome!");
-  //   }
-
-  //   break;
-
-  //   default:
-  //   break;
-  // }
-
-  // std::cout << m_hostname << "@" << m_hostaddr << " " << message << "\n";
+void User::reply(int code, const std::string &arg0, const std::string &arg1,
+                 const std::string &arg2, const std::string &arg3) {
+  std::ostringstream stream;
+  std::string target =
+      m_status == USER_STATUS_PASSWORD || m_status == USER_STATUS_REGISTER
+          ? "*"
+          : m_nickname;
+  stream << ":server " << std::dec << code << " " << target << " "
+         << Response::code_to_response(code, arg0, arg1, arg2, arg3);
+  write(stream.str());
 }

@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 02:47:49 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/03 11:12:49 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include <netdb.h>
+#include <sstream>
 #include <stdexcept>
 #include <string.h>
 #include <sys/socket.h>
@@ -28,7 +29,8 @@ void PASS(Command &command);
 void NICK(Command &command);
 
 Server::Server(int port, const std::string &password)
-    : m_port(port), m_password(password), m_listening_fd(-1) {
+    : m_port(port), m_password(password), m_listening_fd(-1),
+      m_created_at(std::time(NULL)) {
   m_commands["PASS"] = PASS;
   m_commands["NICK"] = NICK;
 }
@@ -119,6 +121,16 @@ void Server::handle() {
     } else
       ++it;
   }
+}
+
+std::time_t Server::get_created_at() const { return m_created_at; }
+
+std::string Server::get_created_at_formatted() const {
+  char buffer[256];
+  tm *timeinfo = localtime(&m_created_at);
+  size_t size =
+      strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S %Y", timeinfo);
+  return std::string(buffer, size);
 }
 
 void Server::accept_new_connection() {
