@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:13 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:45:27 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 03:30:49 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class Channel {
 private:
   std::string name;
   std::string mode;
+  std::string topic;
   std::map<int, User *> users;
   std::map<int, std::string> users_mode;
   std::vector<User *> invited_users;
@@ -30,6 +31,8 @@ private:
 public:
   Channel();
 
+  void setTopic(std::string topic);
+  std::string getTopic();
   void setName(std::string name);
   std::string getName() const;
 
