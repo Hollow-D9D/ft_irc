@@ -36,6 +36,8 @@ public:
   void setMode(std::string mode);
   std::string getMode();
 
+  std::string getChannelMode() const;
+
   void setUserMode(User &user, std::string mode);
   std::string getUserMode(User &user);
 
@@ -45,6 +47,7 @@ public:
   void eraseUser(User &user);
   void eraseUser(const std::string &nickname);
   std::vector<User *> getUsers();
+  std::string getNicknames(const std::string &exclude = "") const;
 
   void addInvitedUser(User &user);
   bool isInvitedUser(User &user);

@@ -32,10 +32,11 @@ public:
   ~Server();
 
   int init();
-  void handle();
+  bool handle();
 
   std::time_t get_created_at() const;
   std::string get_created_at_formatted() const;
+  std::string get_users_count() const;
 
   const std::string &get_password() const;
   int get_port() const;
@@ -47,7 +48,8 @@ public:
 
   bool is_channel(std::string const &name) const;
   std::vector<Channel *> get_channels();
-  Channel &get_channel(std::string &name);
+  Channel &get_channel(const std::string &name);
+  Channel *get_channel2(const std::string &name);
 
   User *find_user_by_nickname(const std::string &nickname) const;
 
@@ -60,9 +62,7 @@ private:
   std::string m_password;
   int m_listening_fd;
   fd_set m_master_fds;
-
   time_t m_created_at;
-
   std::map<int, User *> m_users;
   std::map<std::string, CommandHandlerCallback> m_commands;
   std::map<std::string, Channel> m_channels;

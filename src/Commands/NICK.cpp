@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../User.h"
 #include "../Command.h"
 #include "../Server.h"
+#include "../User.h"
 
 static bool isspecial(char c) {
   return (c >= '[' && c <= '`') || (c >= '{' && c <= '}');
@@ -46,7 +46,7 @@ void NICK(Command &command) {
   }
 
   if (command.get_server().find_user_by_nickname(arguments[0]) != NULL) {
-    sender.reply(433);
+    sender.reply(433, arguments[0]);
     return;
   }
 

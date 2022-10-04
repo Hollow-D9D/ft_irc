@@ -12,6 +12,7 @@
 
 #ifndef __USER_H__
 #define __USER_H__
+#include "UserMode.h"
 #include <ctime>
 #include <string>
 #include <vector>
@@ -47,6 +48,7 @@ public:
   const std::string &get_host() const;
   std::string get_prefix() const;
   std::time_t get_last_ping() const;
+  UserMode &get_user_mode();
 
   void set_username(const std::string &username);
   void set_nickname(const std::string &nickname);
@@ -63,11 +65,13 @@ public:
   void write(const std::string &message);
   void send_to(User &user, const std::string &message);
   void broadcast(const std::string &message);
+  void push();
 
   // for pong cmd
   void set_last_ping(time_t last_ping);
 
   bool operator==(const User &other) const;
+  bool operator!=(const User &other) const;
 
 private:
   void parse_messages();
@@ -84,6 +88,8 @@ private:
   std::string m_realname;
   time_t m_last_ping;
   std::vector<Command *> m_queued_commands;
+  std::vector<std::string> m_sending_queue;
+  UserMode m_user_mode;
 };
 
 #endif // __USER_H__

@@ -35,6 +35,9 @@ fclean: clean
 re: fclean $(NAME)
 
 debug: CXXFLAGS += -g -O0 -DDEBUG
-debug: re
+debug: all
 
-.PHONY: all clean fclean re debug
+leaks: debug
+	leaks -atExit -- ./$(NAME) 6667 password
+
+.PHONY: all clean fclean re debug leaks

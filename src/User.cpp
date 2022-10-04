@@ -12,6 +12,7 @@
 
 #include "User.h"
 #include "Command.h"
+#include "Common.h"
 #include "Response.h"
 #include "Server.h"
 #include <algorithm>
@@ -27,9 +28,11 @@
 User::User(Server &server, int fd, const std::string &hostname,
            const std::string &hostaddr)
     : m_server(server), m_fd(fd), m_status(USER_STATUS_PASSWORD),
-      m_hostname(hostname), m_hostaddr(hostaddr) {}
+      m_hostname(hostname), m_hostaddr(hostaddr), m_username(""),
+      m_nickname(""), m_realname(""), m_last_ping(0), m_queued_commands(),
+      m_sending_queue(), m_user_mode() {}
 
-User::~User() {}
+User::~User() { std::cout << "FD: " << m_fd << " has been destroyed.\n"; }
 
 Server &User::get_server() { return m_server; }
 
@@ -56,6 +59,8 @@ const std::string &User::get_host() const {
 }
 
 std::string User::get_prefix() const {
+  if (m_nickname.empty())
+    return "";
   std::string prefix = m_nickname;
   const std::string &host = get_host();
   if (!host.empty()) {
@@ -67,6 +72,8 @@ std::string User::get_prefix() const {
 }
 
 std::time_t User::get_last_ping() const { return m_last_ping; }
+
+UserMode &User::get_user_mode() { return m_user_mode; }
 
 void User::set_username(const std::string &username) { m_username = username; }
 
@@ -81,12 +88,23 @@ void User::set_realname(const std::string &realname) { m_realname = realname; }
 void User::set_status(UserStatus status) {
   m_previous_status = m_status;
   m_status = status;
+
+  if (m_status == USER_STATUS_ONLINE) {
+    std::string users_count = std::to_string(m_server.get_users().size());
+    reply(001, get_prefix());
+    reply(002, m_hostname, "1.0");
+    reply(003, m_server.get_created_at_formatted());
+    reply(004, "ft_irc", "1.0", "aiwro", "Oovimnptkl");
+    reply(251, users_count, "0");
+    reply(252, "0");
+    reply(253, "0");
+    reply(254, std::to_string(m_server.get_channels().size()));
+    reply(255, users_count, "0");
+  }
 }
 
 void User::write(const std::string &message) {
-  std::cout << "(" << m_fd << ")> " << message << "\n";
-  std::string formatted = message + "\r\n";
-  send(m_fd, formatted.data(), formatted.size(), 0);
+  m_sending_queue.push_back(message);
 }
 
 void User::send_to(User &user, const std::string &message) {
@@ -100,9 +118,25 @@ void User::broadcast(const std::string &message) {
     send_to(*(it->second), message);
 }
 
+void User::push() {
+  if (m_sending_queue.empty())
+    return;
+
+  std::string final_message = "";
+  for (std::vector<std::string>::iterator it = m_sending_queue.begin();
+       it != m_sending_queue.end(); ++it) {
+    std::cout << "(" << m_fd << ")> " << *it << "\n";
+    final_message += *it + CRLF;
+  }
+  m_sending_queue.clear();
+  send(m_fd, final_message.data(), final_message.size(), 0);
+}
+
 void User::set_last_ping(time_t last_ping) { m_last_ping = last_ping; }
 
 bool User::operator==(const User &other) const { return m_fd == other.m_fd; }
+
+bool User::operator!=(const User &other) const { return m_fd != other.m_fd; }
 
 void User::parse_messages() {
 
@@ -113,18 +147,18 @@ void User::parse_messages() {
     return;
 
   if (size == 0) {
-    m_status = USER_STATUS_DISCONNECTED;
+    set_status(USER_STATUS_DISCONNECTED);
     return;
   }
 
   buffer[size] = '\0';
 
-  char *token = std::strtok(buffer, "\r\n");
+  char *token = std::strtok(buffer, CRLF);
   while (token != NULL) {
     std::cout << "(" << m_fd << ")< " << token << "\n";
     m_queued_commands.push_back(
         new Command(m_server, *this, std::string(token)));
-    token = std::strtok(NULL, "\r\n");
+    token = std::strtok(NULL, CRLF);
   }
 }
 
@@ -151,13 +185,6 @@ void User::handle() {
   if (m_status == USER_STATUS_REGISTER && !m_nickname.empty() &&
       !m_realname.empty())
     set_status(USER_STATUS_ONLINE);
-
-  if (m_status != m_previous_status && m_status == USER_STATUS_ONLINE) {
-    reply(001, m_username);
-    reply(002, m_hostname, "1.0");
-    reply(003, m_server.get_created_at_formatted());
-    reply(004, "ft_irc", "1.0", "aiwro", "Oovimnptkl");
-  }
 }
 
 void User::reply(int code, const std::string &arg0, const std::string &arg1,
@@ -169,8 +196,8 @@ void User::reply(int code, const std::string &arg0, const std::string &arg1,
       m_status == USER_STATUS_PASSWORD || m_status == USER_STATUS_REGISTER
           ? "*"
           : m_nickname;
-  stream << ":server " << std::setfill('0') << std::setw(3) << code << " "
-         << target << " "
+  stream << ":" << get_prefix() << " " << std::setfill('0') << std::setw(3)
+         << code << " " << target << " "
          << Response::code_to_response(code, arg0, arg1, arg2, arg3, arg4, arg5,
                                        arg6);
   write(stream.str());

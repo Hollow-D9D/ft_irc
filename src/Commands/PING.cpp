@@ -15,7 +15,9 @@
 
 void PING(Command &cmd) {
   std::vector<std::string> arguments = cmd.get_arguments();
-  if (arguments.empty())
+  if (arguments.empty()) {
+    cmd.get_sender().reply(409, "PING");
     return;
+  }
   cmd.get_sender().send_to(cmd.get_sender(), "PONG :" + arguments[0]);
 }

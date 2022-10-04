@@ -23,6 +23,14 @@ void Channel::setMode(std::string mode) { this->mode = mode; }
 
 std::string Channel::getMode() { return this->mode; }
 
+std::string Channel::getChannelMode() const {
+  if (mode.find('p') != std::string::npos)
+    return "*";
+  if (mode.find('s') != std::string::npos)
+    return "@";
+  return "=";
+}
+
 void Channel::setUserMode(User &user, std::string mode) {
   users_mode[user.get_fd()] = mode;
 }
@@ -43,6 +51,22 @@ void Channel::eraseUser(const std::string &nickname) {
       return;
     }
   }
+}
+
+std::string Channel::getNicknames(const std::string &exclude) const {
+  std::string result = "";
+  for (std::map<int, User *>::const_iterator it = users.begin();
+       it != users.end();) {
+    User *user = it->second;
+    if (user->get_nickname() == exclude) {
+      ++it;
+      continue;
+    }
+    result += user->get_nickname();
+    if (++it != users.end())
+      result += " ";
+  }
+  return result;
 }
 
 std::vector<User *> Channel::getUsers() {

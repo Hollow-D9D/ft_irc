@@ -10,11 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Common.h"
 #include "Server.h"
+#include <csignal>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
 #include <string>
+
+static bool g_stop = false;
+
+void handler(int) { g_stop = true; }
 
 int main(int argc, char **argv) {
 
@@ -26,9 +32,12 @@ int main(int argc, char **argv) {
   try {
     Server server(std::atoi(argv[1]), std::string(argv[2]));
     server.init();
+    signal(SIGINT, handler);
+    signal(SIGTERM, handler);
 
-    for (;;)
-      server.handle();
+    while (!g_stop)
+      if (!server.handle())
+        break;
 
   } catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << "\n";

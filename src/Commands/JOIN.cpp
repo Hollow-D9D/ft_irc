@@ -16,6 +16,7 @@
 #include "User.h"
 
 void JOIN(Command &cmd) {
+  User &sender = cmd.get_sender();
   std::vector<std::string> arguments = cmd.get_arguments();
   if (arguments.empty())
     return;
@@ -29,8 +30,11 @@ void JOIN(Command &cmd) {
   for (std::vector<std::string>::iterator it = channels_name.begin();
        it != channels_name.end(); ++it) {
     Channel &channel = cmd.get_server().get_channel(*it);
-    channel.addUser(cmd.get_sender());
-    channel.broadcast(cmd.get_sender(), "JOIN :" + channel.getName());
+    channel.addUser(sender);
+    sender.reply(353, channel.getChannelMode(), channel.getName(),
+                 channel.getNicknames());
+    sender.reply(366, channel.getName());
+    channel.broadcast(sender, "JOIN :" + channel.getName());
     //**if we want to know users's last channel
     // if (channel.getMode().find('p') == std::string::npos)
     //     cmd.get_sender().set_last_channel(channel.getName());

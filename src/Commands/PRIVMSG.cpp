@@ -42,7 +42,8 @@ void PRIVMSG(Command &cmd) {
   }
   for (std::vector<User *>::iterator it = users.begin(); it != users.end();
        ++it)
-    sender.send_to(*(*it),
-                   "PRIVMSG " + getter + " :" +
-                       cmd.get_message()); // + get trailer()
+    if (sender != *(*it))
+      sender.send_to(*(*it),
+                     "PRIVMSG " + getter + " :" +
+                         cmd.get_message()); // + get trailer()
 }

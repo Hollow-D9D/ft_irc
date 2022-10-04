@@ -16,6 +16,7 @@
 #include "User.h"
 #include <arpa/inet.h>
 #include <cerrno>
+#include <cstdlib>
 #include <fcntl.h>
 #include <iostream>
 #include <netdb.h>
@@ -35,10 +36,13 @@ void KICK(Command &);
 void PONG(Command &);
 void PRIVMSG(Command &);
 void QUIT(Command &);
+void WHO(Command &);
+void MODE(Command &);
+void WHOIS(Command &);
 
 Server::Server(int port, const std::string &password)
     : m_port(port), m_password(password), m_listening_fd(-1) {
-  m_commands["CAP"] = CAP;
+  //  m_commands["CAP"] = CAP;
   m_commands["JOIN"] = JOIN;
   m_commands["KICK"] = KICK;
   m_commands["PONG"] = PONG;
@@ -49,6 +53,9 @@ Server::Server(int port, const std::string &password)
   m_commands["USER"] = USER;
   m_commands["PING"] = PING;
   m_commands["QUIT"] = QUIT;
+  m_commands["WHO"] = WHO;
+  m_commands["MODE"] = MODE;
+  m_commands["WHOIS"] = WHOIS;
 }
 
 Server::~Server() {
@@ -116,13 +123,13 @@ User *Server::get_user(std::string &name) {
   return NULL;
 }
 
-void Server::handle() {
+bool Server::handle() {
 
   fd_set clone = m_master_fds;
   int count = select(FD_SETSIZE, &clone, NULL, NULL, 0);
 
   if (count < 0)
-    throw std::runtime_error("Failed to run select function.");
+    return false;
 
   for (int i = 0; i < FD_SETSIZE; ++i)
     if (FD_ISSET(i, &clone)) {
@@ -140,21 +147,25 @@ void Server::handle() {
   for (std::map<int, User *>::iterator it = m_users.begin();
        it != m_users.end();) {
     User *user = it->second;
+    if (user)
+      user->push();
     if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
-      for (std::map<std::string, Channel>::iterator it = m_channels.begin();
-           it != m_channels.end();) {
-        if (it->second.isUser(*user))
-          it->second.eraseUser(user->get_nickname());
-        if (it->second.getUsers().empty())
-          m_channels.erase(it++);
-        else
-          ++it;
-      }
+      //  for (std::map<std::string, Channel>::iterator it = m_channels.begin();
+      //       it != m_channels.end();) {
+      //    if (it->second.isUser(*user))
+      //      it->second.eraseUser(user->get_nickname());
+      //    if (it->second.getUsers().empty())
+      //      m_channels.erase(it++);
+      //    else
+      //      ++it;
+      //  }
       delete user;
       m_users.erase(it++);
     } else
       ++it;
   }
+
+  return true;
 }
 
 void Server::accept_new_connection() {
@@ -167,11 +178,10 @@ void Server::accept_new_connection() {
     return;
   }
 
-  std::string host(NI_MAXHOST, '\0');
-  std::string srv(NI_MAXSERV, '\0');
-  if (getnameinfo(&in_addr, in_len, const_cast<char *>(host.c_str()),
-                  host.size(), const_cast<char *>(srv.c_str()), srv.size(),
-                  0) == 0) {
+  char host[NI_MAXHOST];
+  char srv[NI_MAXSERV];
+  if (getnameinfo(&in_addr, in_len, host, NI_MAXHOST, srv, NI_MAXSERV, 0) ==
+      0) {
     std::cout << "Info: New connection: fd = " << fd << " " << host << "@"
               << srv << ".\n";
   }
@@ -197,6 +207,13 @@ std::string Server::get_created_at_formatted() const {
   return std::string(buffer, size);
 }
 
+std::string Server::get_users_count() const {
+  std::string result;
+  size_t count = m_users.size();
+  std::to_string(count);
+  return result;
+}
+
 bool Server::make_socket_nonblocking(int fd) {
   return fcntl(fd, F_SETFL, O_NONBLOCK) != -1;
 }
@@ -213,13 +230,18 @@ std::vector<Channel *> Server::get_channels() {
   return channels;
 }
 
-Channel &Server::get_channel(std::string &name) {
+Channel &Server::get_channel(const std::string &name) {
   Channel &channel = m_channels[name];
   if (is_channel(name)) {
     channel.setName(name);
     // display channel
   }
   return (channel);
+}
+
+Channel *Server::get_channel2(const std::string &name) {
+  std::map<std::string, Channel>::iterator it = m_channels.find(name);
+  return it != m_channels.end() ? &it->second : NULL;
 }
 
 User *Server::find_user_by_nickname(const std::string &nickname) const {
