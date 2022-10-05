@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 14:50:29 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 14:56:16 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ bool Server::handle() {
 
     user->push();
 
-    if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
+    if (user->get_status() == USER_STATUS_DISCONNECTED) {
       for (std::map<std::string, Channel>::iterator cit = m_channels.begin();
            cit != m_channels.end();) {
         cit->second.eraseUser(*user);
