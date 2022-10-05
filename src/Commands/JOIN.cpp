@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   JOIN.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 10:34:41 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/05 10:44:33 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:08:10 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 
 void JOIN(Command &cmd) {
   User &sender = cmd.get_sender();
+  if (sender.get_status() != USER_STATUS_ONLINE) {
+    sender.reply(451);
+    return;
+  }
+
   std::vector<std::string> arguments = cmd.get_arguments();
   if (arguments.empty())
     return;

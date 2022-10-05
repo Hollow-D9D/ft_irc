@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:01:00 by tharutyu         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:49:25 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ public:
 
   std::time_t get_created_at() const;
   std::string get_created_at_formatted() const;
-  std::string get_users_count() const;
 
   const std::string &get_password() const;
   int get_port() const;

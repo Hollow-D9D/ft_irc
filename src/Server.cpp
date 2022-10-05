@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:00:47 by tharutyu         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:49:59 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "Channel.hpp"
 #include "Command.h"
 #include "User.h"
+#include "Utilities.h"
 #include <arpa/inet.h>
 #include <cerrno>
 #include <cstdlib>
@@ -42,8 +43,8 @@ void MODE(Command &);
 void WHOIS(Command &);
 
 Server::Server(int port, const std::string &password)
-    : m_port(port), m_password(password), m_listening_fd(-1) {
-  //  m_commands["CAP"] = CAP;
+    : m_port(port), m_password(password), m_listening_fd(-1), m_master_fds(),
+      m_created_at(std::time(NULL)), m_users(), m_commands(), m_channels() {
   m_commands["JOIN"] = JOIN;
   m_commands["KICK"] = KICK;
   m_commands["PONG"] = PONG;
@@ -51,7 +52,7 @@ Server::Server(int port, const std::string &password)
   m_commands["NOTICE"] = NOTICE;
   m_commands["NICK"] = NICK;
   m_commands["PASS"] = PASS;
-  m_commands["NICK"] = NICK;
+  m_commands["KICK"] = KICK;
   m_commands["USER"] = USER;
   m_commands["PING"] = PING;
   m_commands["QUIT"] = QUIT;
@@ -207,13 +208,6 @@ std::string Server::get_created_at_formatted() const {
   size_t size =
       strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S %Y", timeinfo);
   return std::string(buffer, size);
-}
-
-std::string Server::get_users_count() const {
-  std::string result;
-  size_t count = m_users.size();
-  std::to_string(count);
-  return result;
 }
 
 bool Server::make_socket_nonblocking(int fd) {

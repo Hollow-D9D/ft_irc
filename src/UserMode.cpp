@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   UserMode.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/05 11:48:44 by aabajyan          #+#    #+#             */
+/*   Updated: 2022/10/05 11:52:33 by aabajyan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "UserMode.h"
 #include <string>
 
@@ -44,7 +56,17 @@ void UserMode::set_mode(std::string mode) {
     }
   }
 
-  m_kind = result;
+  switch (change_type) {
+  case USER_MODE_CHANGE_TYPE_SET:
+    m_kind = result;
+    break;
+  case USER_MODE_CHANGE_TYPE_ADD:
+    m_kind |= result;
+    break;
+  case USER_MODE_CHANGE_TYPE_REMOVE:
+    m_kind &= ~result;
+    break;
+  }
 }
 
 std::string UserMode::to_string() const {
