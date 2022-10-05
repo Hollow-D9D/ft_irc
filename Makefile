@@ -6,7 +6,7 @@
 #    By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/24 20:41:09 by aabajyan          #+#    #+#              #
-#    Updated: 2022/10/03 02:31:35 by aabajyan         ###   ########.fr        #
+#    Updated: 2022/10/05 12:00:09 by aabajyan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,6 +38,6 @@ debug: CXXFLAGS += -g -O0 -DDEBUG
 debug: all
 
 leaks: debug
-	leaks -atExit -- ./$(NAME) 6667 password
+	valgrind --leak-check=full ./$(NAME) 6667 password
 
 .PHONY: all clean fclean re debug leaks
