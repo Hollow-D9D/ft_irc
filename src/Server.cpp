@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:54:53 by tharutyu         ###   ########.fr       */
+/*   Updated: 2022/10/05 13:17:06 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,8 @@ int Server::init() {
   if (listen(m_listening_fd, SOMAXCONN) == -1)
     throw std::runtime_error("Failed to listen.");
 
-  std::cout << "Listening to 0.0.0.0:" << m_port << "\n";
+  std::cout << "Listening to " << inet_ntoa(hint.sin_addr) << ":" << m_port
+            << "\n";
 
   return 0;
 }
