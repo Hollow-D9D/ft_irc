@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 14:24:41 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:38:37 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 20:06:39 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,5 @@ void PING(Command &cmd) {
     sender.reply(409, "PING");
     return;
   }
-  sender.set_last_ping(std::time(NULL));
   sender.send_to(sender, "PONG :" + arguments[0]);
 }

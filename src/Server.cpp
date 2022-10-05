@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 18:16:26 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 20:10:19 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,15 +140,6 @@ bool Server::handle() {
   if (count < 0)
     return false;
 
-  std::time_t now = std::time(NULL);
-  if (now - m_pinged_at > PING_TIMEOUT)
-    for (std::map<int, User *>::iterator it = m_users.begin();
-         it != m_users.end(); ++it)
-      if (now - it->second->get_last_ping() > USER_TIMEOUT) {
-        it->second->broadcast("QUIT :Connection timeout");
-        it->second->set_status(USER_STATUS_DISCONNECTED);
-      }
-
   for (int i = 0; i < FD_SETSIZE; ++i)
     if (FD_ISSET(i, &clone)) {
       if (i == m_listening_fd) {
@@ -158,11 +149,24 @@ bool Server::handle() {
 
       std::map<int, User *>::iterator it = m_users.find(i);
       if (it != m_users.end() &&
-          it->second->get_status() != USER_STATUS_DISCONNECTED)
+          it->second->get_status() != USER_STATUS_DISCONNECTED) {
         it->second->handle();
+        it->second->set_last_ping(std::time(NULL));
+      }
     }
 
-  // Cleanup
+  // Check for timeout
+  std::time_t now = std::time(NULL);
+  if (now - m_pinged_at > PING_TIMEOUT)
+    for (std::map<int, User *>::iterator it = m_users.begin();
+         it != m_users.end(); ++it)
+      if (it->second->get_status() != USER_STATUS_DISCONNECTED &&
+          now - it->second->get_last_ping() > USER_TIMEOUT) {
+        it->second->broadcast("QUIT :Connection timeout");
+        it->second->set_status(USER_STATUS_DISCONNECTED);
+      }
+
+  // Remove disconnected users and empty channels
   for (std::map<int, User *>::iterator it = m_users.begin();
        it != m_users.end();) {
     User *user = it->second;
