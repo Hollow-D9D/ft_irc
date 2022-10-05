@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   NICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 02:23:43 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 12:37:43 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 10:47:04 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Command.h"
-#include "../Server.h"
-#include "../User.h"
+#include "Command.h"
+#include "Server.h"
+#include "User.h"
 
 static bool isspecial(char c) {
   return (c >= '[' && c <= '`') || (c >= '{' && c <= '}');

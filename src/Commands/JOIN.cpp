@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   JOIN.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 10:34:41 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:45:20 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 10:44:33 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,5 @@ void JOIN(Command &cmd) {
                  channel.getNicknames());
     sender.reply(366, channel.getName());
     channel.broadcast(sender, "JOIN :" + channel.getName());
-    //**if we want to know users's last channel
-    // if (channel.getMode().find('p') == std::string::npos)
-    //     cmd.get_sender().set_last_channel(channel.getName());
   }
 }

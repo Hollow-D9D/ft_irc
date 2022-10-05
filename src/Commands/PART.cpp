@@ -1,7 +1,18 @@
-#include "../Channel.hpp"
-#include "../Command.h"
-#include "../Server.h"
-#include "../User.h"
+#include "Channel.hpp"
+#include "Command.h"
+#include "Server.h"
+#include "User.h"
+
+std::vector<std::string> split(std::string arg, std::string c) {
+  std::vector<std::string> channels;
+  size_t pos;
+  while ((pos = arg.find(c)) != std::string::npos) {
+    channels.push_back(arg.substr(0, pos));
+    arg.erase(0, pos + 1);
+  }
+  channels.push_back(arg);
+  return channels;
+}
 
 void PART(Command &cmd)
 {
@@ -9,7 +20,7 @@ void PART(Command &cmd)
 	{
 		cmd.get_sender().reply(461, "PART");
 		return;
-	}                                   //to do
+	}                                  
 	std::vector<std::string> channels = split(cmd.get_arguments()[0], ",");
 	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{

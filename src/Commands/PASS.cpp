@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   PASS.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 02:16:14 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:22:54 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 10:47:15 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Command.h"
-#include "../Server.h"
-#include "../User.h"
+#include "Command.h"
+#include "Server.h"
+#include "User.h"
 
 void PASS(Command &command) {
   User &sender = command.get_sender();

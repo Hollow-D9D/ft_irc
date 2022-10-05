@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 23:46:07 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 10:40:40 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void JOIN(Command &);
 void KICK(Command &);
 void PONG(Command &);
 void PRIVMSG(Command &);
+void NOTICE(Command &);
 void QUIT(Command &);
 void WHO(Command &);
 void MODE(Command &);
@@ -47,6 +48,7 @@ Server::Server(int port, const std::string &password)
   m_commands["KICK"] = KICK;
   m_commands["PONG"] = PONG;
   m_commands["PRIVMSG"] = PRIVMSG;
+  m_commands["NOTICE"] = NOTICE;
   m_commands["NICK"] = NICK;
   m_commands["PASS"] = PASS;
   m_commands["NICK"] = NICK;

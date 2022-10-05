@@ -1,7 +1,7 @@
-#include "../Channel.hpp"
-#include "../Command.h"
-#include "../Server.h"
-#include "../User.h"
+#include "Channel.hpp"
+#include "Command.h"
+#include "Server.h"
+#include "User.h"
 
 void TOPIC(Command &cmd)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 12:10:59 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/05 02:58:24 by tharutyu         ###   ########.fr       */
+/*   Updated: 2022/10/05 10:38:59 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ std::vector<std::string> split(std::string arg, std::string c) {
 void KICK(Command &cmd) {
   std::vector<std::string> arguments = cmd.get_arguments();
   if (arguments.empty())
-    return;
+    return cmd.get_sender().reply(403, "KICK");
   std::vector<std::string> channels = split(arguments[0], ",");
   std::vector<std::string> users = split(arguments[1], ",");
   std::vector<std::string>::iterator it;

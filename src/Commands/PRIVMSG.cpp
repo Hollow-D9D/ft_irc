@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PRIVMSG.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 10:08:20 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/03 23:20:32 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 10:46:06 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,37 @@
 #include "Command.h"
 #include "Server.h"
 #include "User.h"
-#include <algorithm>
 
 void PRIVMSG(Command &cmd) {
   Server &server = cmd.get_server();
   User &sender = cmd.get_sender();
   const std::vector<std::string> &args = cmd.get_arguments();
   if (args.empty())
-    return;
+    return sender.reply(411, "PRIVMSG");
   std::vector<User *> users;
   std::string getter = args.at(0);
   if (*getter.begin() == '#') {
-    Channel &channel = server.get_channel(getter);
-    if (!channel.isUser(sender))
-      return;
-    users = channel.getUsers();
-    // for (std::vector<User *>::iterator it = users.begin(); it != users.end();
-    //      ++it) {
-    //   User *user = *it;
-    //   server.get_users().at(user->get_fd());
-    // }
+    if (server.is_channel(getter)){
+      Channel &channel = server.get_channel(getter);
+      if (!channel.isUser(sender))
+        return sender.reply(404, channel.getName());
+      users = channel.getUsers();
+      std::vector<User *>::iterator it = find(users.begin(), users.end(), &sender);
+      if (it != users.end())
+        users.erase(it);
+    }
+    else
+      return sender.reply(404, getter);
   } else {
     if (server.get_user(getter))
       users.push_back(server.get_user(getter));
     else
-      return;
+      return sender.reply(401, getter);
   }
   for (std::vector<User *>::iterator it = users.begin(); it != users.end();
        ++it)
     if (sender != *(*it))
       sender.send_to(*(*it),
                      "PRIVMSG " + getter + " :" +
-                         cmd.get_message()); // + get trailer()
+                         cmd.get_message());
 }
