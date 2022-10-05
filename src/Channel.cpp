@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:10 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 18:16:56 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:34:34 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,11 @@ std::string Channel::getUserMode(User &user) {
 
 void Channel::addUser(User &user) { users[user.get_fd()] = &user; }
 
-void Channel::eraseUser(User &user) { users.erase(users.find(user.get_fd())); }
+void Channel::eraseUser(User &user) {
+  std::map<int, User *>::iterator it = users.find(user.get_fd());
+  if (it != users.end())
+    users.erase(it);
+}
 
 void Channel::eraseUser(const std::string &nickname) {
   std::map<int, User *>::iterator it;
