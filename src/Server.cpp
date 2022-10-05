@@ -6,13 +6,14 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:15:55 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:41:19 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.h"
 #include "Channel.hpp"
 #include "Command.h"
+#include "Common.h"
 #include "User.h"
 #include "Utilities.h"
 #include <arpa/inet.h>
@@ -44,7 +45,8 @@ void WHOIS(Command &);
 
 Server::Server(int port, const std::string &password)
     : m_port(port), m_password(password), m_listening_fd(-1), m_master_fds(),
-      m_created_at(std::time(NULL)), m_users(), m_commands(), m_channels() {
+      m_created_at(std::time(NULL)), m_pinged_at(std::time(NULL)), m_users(),
+      m_commands(), m_channels() {
   m_commands["JOIN"] = JOIN;
   m_commands["KICK"] = KICK;
   m_commands["PONG"] = PONG;
@@ -134,6 +136,15 @@ bool Server::handle() {
   if (count < 0)
     return false;
 
+  std::time_t now = std::time(NULL);
+  if (now - m_pinged_at > PING_TIMEOUT)
+    for (std::map<int, User *>::iterator it = m_users.begin();
+         it != m_users.end(); ++it)
+      if (now - it->second->get_last_ping() > USER_TIMEOUT) {
+        it->second->broadcast("QUIT :Connection timeout");
+        it->second->set_status(USER_STATUS_DISCONNECTED);
+      }
+
   for (int i = 0; i < FD_SETSIZE; ++i)
     if (FD_ISSET(i, &clone)) {
       if (i == m_listening_fd) {
@@ -142,7 +153,8 @@ bool Server::handle() {
       }
 
       std::map<int, User *>::iterator it = m_users.find(i);
-      if (it != m_users.end())
+      if (it != m_users.end() &&
+          it->second->get_status() != USER_STATUS_DISCONNECTED)
         it->second->handle();
     }
 
@@ -153,15 +165,6 @@ bool Server::handle() {
     if (user)
       user->push();
     if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
-      //  for (std::map<std::string, Channel>::iterator it = m_channels.begin();
-      //       it != m_channels.end();) {
-      //    if (it->second.isUser(*user))
-      //      it->second.eraseUser(user->get_nickname());
-      //    if (it->second.getUsers().empty())
-      //      m_channels.erase(it++);
-      //    else
-      //      ++it;
-      //  }
       delete user;
       m_users.erase(it++);
     } else

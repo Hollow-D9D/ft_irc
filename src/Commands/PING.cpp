@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 14:24:41 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/03 15:44:58 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:38:37 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 
 void PING(Command &cmd) {
   std::vector<std::string> arguments = cmd.get_arguments();
+  User &sender = cmd.get_sender();
   if (arguments.empty()) {
-    cmd.get_sender().reply(409, "PING");
+    sender.reply(409, "PING");
     return;
   }
-  cmd.get_sender().send_to(cmd.get_sender(), "PONG :" + arguments[0]);
+  sender.set_last_ping(std::time(NULL));
+  sender.send_to(sender, "PONG :" + arguments[0]);
 }
