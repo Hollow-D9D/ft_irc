@@ -243,6 +243,8 @@ bool Server::is_channel(std::string const &name) const {
   return m_channels.count(name);
 }
 
+void Server::delete_channel(Channel &chan) { m_channels.erase(chan.getName()); }
+
 std::vector<Channel *> Server::get_channels() {
   std::map<std::string, Channel *>::iterator it;
   std::vector<Channel *> channels;

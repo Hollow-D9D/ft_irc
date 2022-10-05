@@ -39,9 +39,8 @@ void PART(Command &cmd) {
           "PART " + channel +
               (cmd.get_message().size() ? " :" + cmd.get_message() : ""));
       chan.eraseUser(cmd.get_sender());
-      // if (chan.getUsers().size() == 0)
-      // cmd.get_server().// delete channel (3 lines of code need to be
-      // implemented in Server)
+      if (chan.getUsers().size() == 0)
+        cmd.get_server().delete_channel(chan);
     } else
       cmd.get_sender().reply(403, channel);
   }

@@ -49,6 +49,7 @@ public:
   std::vector<Channel *> get_channels();
   Channel &get_channel(const std::string &name);
   Channel *get_channel_if_exists(const std::string &name);
+  void delete_channel(Channel &chan);
 
   User *find_user_by_nickname(const std::string &nickname) const;
 
