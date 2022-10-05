@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 11:58:13 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:15:55 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ void MODE(Command &);
 void WHOIS(Command &);
 
 Server::Server(int port, const std::string &password)
-    : m_port(port), m_password(password), m_listening_fd(-1) {
+    : m_port(port), m_password(password), m_listening_fd(-1), m_master_fds(),
+      m_created_at(std::time(NULL)), m_users(), m_commands(), m_channels() {
   m_commands["JOIN"] = JOIN;
   m_commands["KICK"] = KICK;
   m_commands["PONG"] = PONG;
