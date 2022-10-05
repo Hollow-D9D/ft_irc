@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 20:10:19 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 23:15:19 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,18 +42,22 @@ void QUIT(Command &);
 void WHO(Command &);
 void MODE(Command &);
 void WHOIS(Command &);
+void TOPIC(Command &);
+void INVITE(Command &);
+void NAMES(Command &);
+void LIST(Command &);
 
 Server::Server(int port, const std::string &password)
     : m_port(port), m_password(password), m_listening_fd(-1), m_master_fds(),
       m_created_at(std::time(NULL)), m_pinged_at(std::time(NULL)), m_users(),
       m_commands(), m_channels() {
+  m_commands["PASS"] = PASS;
   m_commands["JOIN"] = JOIN;
   m_commands["KICK"] = KICK;
   m_commands["PONG"] = PONG;
   m_commands["PRIVMSG"] = PRIVMSG;
   m_commands["NOTICE"] = NOTICE;
   m_commands["NICK"] = NICK;
-  m_commands["PASS"] = PASS;
   m_commands["KICK"] = KICK;
   m_commands["USER"] = USER;
   m_commands["PING"] = PING;
@@ -61,6 +65,10 @@ Server::Server(int port, const std::string &password)
   m_commands["WHO"] = WHO;
   m_commands["MODE"] = MODE;
   m_commands["WHOIS"] = WHOIS;
+  m_commands["TOPIC"] = WHOIS;
+  m_commands["INVITE"] = INVITE;
+  m_commands["NAMES"] = NAMES;
+  m_commands["LIST"] = LIST;
 }
 
 Server::~Server() {

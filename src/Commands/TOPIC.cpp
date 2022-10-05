@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 11:50:05 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 13:38:46 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 23:15:21 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void TOPIC(Command &cmd) {
     if (!canEdit)
       return cmd.get_sender().reply(482, channel.getName());
     channel.setTopic(cmd.get_message());
-    return channel.broadcast(cmd.get_sender(), "TOPIC" + channel.getName() +
+    return channel.broadcast(cmd.get_sender(), "TOPIC " + channel.getName() +
                                                    " :" + channel.getTopic());
   }
 
