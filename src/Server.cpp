@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 14:09:31 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 14:50:29 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,9 +163,25 @@ bool Server::handle() {
   for (std::map<int, User *>::iterator it = m_users.begin();
        it != m_users.end();) {
     User *user = it->second;
-    if (user)
-      user->push();
+
+    if (!user) {
+      ++it;
+      continue;
+    }
+
+    user->push();
+
     if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
+      for (std::map<std::string, Channel>::iterator cit = m_channels.begin();
+           cit != m_channels.end();) {
+        cit->second.eraseUser(*user);
+        if (cit->second.getUsers().empty()) {
+          std::cout << "Channel " << cit->second.getName()
+                    << " has no users, removing.\n";
+          m_channels.erase(cit++);
+        } else
+          ++cit;
+      }
       FD_CLR(user->get_fd(), &m_master_fds);
       delete user;
       m_users.erase(it++);
