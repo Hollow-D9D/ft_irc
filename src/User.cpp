@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 14:21:51 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:16:22 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ User::User(Server &server, int fd, const std::string &hostname,
       m_nickname(""), m_realname(""), m_last_ping(std::time(NULL)),
       m_queued_commands(), m_sending_queue(), m_user_mode() {}
 
-User::~User() { std::cout << "FD: " << m_fd << " has been destroyed.\n"; }
+User::~User() {
+  std::cout << "FD: " << m_fd << " has been destroyed.\n";
+  close(m_fd);
+}
 
 Server &User::get_server() { return m_server; }
 
