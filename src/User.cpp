@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 11:37:56 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 14:21:51 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ User::User(Server &server, int fd, const std::string &hostname,
            const std::string &hostaddr)
     : m_server(server), m_fd(fd), m_status(USER_STATUS_PASSWORD),
       m_hostname(hostname), m_hostaddr(hostaddr), m_username(""),
-      m_nickname(""), m_realname(""), m_last_ping(0), m_queued_commands(),
-      m_sending_queue(), m_user_mode() {}
+      m_nickname(""), m_realname(""), m_last_ping(std::time(NULL)),
+      m_queued_commands(), m_sending_queue(), m_user_mode() {}
 
 User::~User() { std::cout << "FD: " << m_fd << " has been destroyed.\n"; }
 
