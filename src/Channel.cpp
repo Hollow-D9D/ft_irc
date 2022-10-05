@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:10 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 13:40:14 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:18:04 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ std::string Channel::getNicknames(const std::string &exclude) const {
 std::vector<User *> Channel::getUsers() {
   std::vector<User *> v_users;
 
-  std::map<int, User *>::iterator it;
+  std::map<int, User *>::const_iterator it;
   for (it = this->users.begin(); it != this->users.end(); ++it)
     v_users.push_back((*it).second);
   return v_users;
@@ -86,7 +86,7 @@ bool Channel::isUser(User &user) {
 }
 
 bool Channel::inChannel(const std::string &name) {
-  std::map<int, User *>::iterator it;
+  std::map<int, User *>::const_iterator it;
   for (it = this->users.begin(); it != this->users.end(); ++it)
     if ((*it).second->get_nickname() == name)
       return true;
