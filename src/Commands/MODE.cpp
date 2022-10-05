@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 11:50:26 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:08:23 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:11:57 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void MODE(Command &command) {
   }
 
   if (arguments[0][0] == '#') {
-    Channel *channel = server.get_channel2(arguments[0]);
+    Channel *channel = server.get_channel_if_exists(arguments[0]);
     if (!channel) {
       sender.reply(401, arguments[0]);
       return;

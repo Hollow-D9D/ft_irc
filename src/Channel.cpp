@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:10 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 17:18:04 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:16:56 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 #include <algorithm>
 
 Channel::Channel() : mode("n") {}
+
+Channel::~Channel() {
+  std::cout << "Channel " << this->name << " has been destroyed.\n";
+}
 
 void Channel::setName(std::string name) { this->name = name; }
 std::string Channel::getName() const { return this->name; }

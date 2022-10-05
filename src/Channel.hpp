@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:13 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 03:30:49 by tharutyu         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:13:15 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ private:
 
 public:
   Channel();
+  virtual ~Channel();
 
   void setTopic(std::string topic);
   std::string getTopic();

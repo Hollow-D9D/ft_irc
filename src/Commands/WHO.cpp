@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 11:50:00 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:08:27 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:11:57 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void WHO(Command &command) {
 
   std::string name = arguments[0];
   if (name[0] == '#') {
-    Channel *channel = server.get_channel2(name);
+    Channel *channel = server.get_channel_if_exists(name);
     if (channel == NULL) {
       sender.reply(403, name);
       return;

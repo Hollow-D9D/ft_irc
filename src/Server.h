@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:55:06 by tharutyu         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:11:57 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ public:
   bool is_channel(std::string const &name) const;
   std::vector<Channel *> get_channels();
   Channel &get_channel(const std::string &name);
-  Channel *get_channel2(const std::string &name);
+  Channel *get_channel_if_exists(const std::string &name);
 
   User *find_user_by_nickname(const std::string &nickname) const;
 
@@ -65,7 +65,7 @@ private:
   std::time_t m_pinged_at;
   std::map<int, User *> m_users;
   std::map<std::string, CommandHandlerCallback> m_commands;
-  std::map<std::string, Channel> m_channels;
+  std::map<std::string, Channel *> m_channels;
 };
 
 #endif // __SERVER_H__

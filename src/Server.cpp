@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 14:56:16 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:16:26 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,9 @@ Server::Server(int port, const std::string &password)
 Server::~Server() {
   for (std::map<int, User *>::iterator it = m_users.begin();
        it != m_users.end(); ++it)
+    delete it->second;
+  for (std::map<std::string, Channel *>::iterator it = m_channels.begin();
+       it != m_channels.end(); ++it)
     delete it->second;
 }
 
@@ -172,12 +175,13 @@ bool Server::handle() {
     user->push();
 
     if (user->get_status() == USER_STATUS_DISCONNECTED) {
-      for (std::map<std::string, Channel>::iterator cit = m_channels.begin();
+      for (std::map<std::string, Channel *>::iterator cit = m_channels.begin();
            cit != m_channels.end();) {
-        cit->second.eraseUser(*user);
-        if (cit->second.getUsers().empty()) {
-          std::cout << "Channel " << cit->second.getName()
+        cit->second->eraseUser(*user);
+        if (cit->second->getUsers().empty()) {
+          std::cout << "Channel " << cit->second->getName()
                     << " has no users, removing.\n";
+          delete cit->second;
           m_channels.erase(cit++);
         } else
           ++cit;
@@ -240,25 +244,25 @@ bool Server::is_channel(std::string const &name) const {
 }
 
 std::vector<Channel *> Server::get_channels() {
-  std::map<std::string, Channel>::iterator it;
+  std::map<std::string, Channel *>::iterator it;
   std::vector<Channel *> channels;
   for (it = m_channels.begin(); it != m_channels.end(); ++it)
-    channels.push_back(&(*it).second);
+    channels.push_back(it->second);
   return channels;
 }
 
 Channel &Server::get_channel(const std::string &name) {
-  Channel &channel = m_channels[name];
-  if (is_channel(name)) {
-    channel.setName(name);
-    // display channel
-  }
-  return (channel);
+  std::map<std::string, Channel *>::iterator it = m_channels.find(name);
+  if (it != m_channels.end())
+    return *it->second;
+  m_channels[name] = new Channel();
+  m_channels[name]->setName(name);
+  return *m_channels[name];
 }
 
-Channel *Server::get_channel2(const std::string &name) {
-  std::map<std::string, Channel>::iterator it = m_channels.find(name);
-  return it != m_channels.end() ? &it->second : NULL;
+Channel *Server::get_channel_if_exists(const std::string &name) {
+  std::map<std::string, Channel *>::iterator it = m_channels.find(name);
+  return it != m_channels.end() ? it->second : NULL;
 }
 
 User *Server::find_user_by_nickname(const std::string &nickname) const {
