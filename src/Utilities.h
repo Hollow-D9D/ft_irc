@@ -6,13 +6,15 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 11:36:37 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 11:37:32 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 11:52:38 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __UTILITIES_H__
 #define __UTILITIES_H__
 #include <sstream>
+#include <string>
+#include <vector>
 
 namespace Utilities {
 template <typename T> std::string to_string(T in) {
@@ -20,6 +22,9 @@ template <typename T> std::string to_string(T in) {
   stream << in;
   return stream.str();
 }
+
+std::vector<std::string> split(std::string arg, const std::string &c);
+
 } // namespace Utilities
 
 #endif // __UTILITIES_H__

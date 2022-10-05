@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 23:42:53 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 11:52:29 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ public:
 
   std::time_t get_created_at() const;
   std::string get_created_at_formatted() const;
-  std::string get_users_count() const;
 
   const std::string &get_password() const;
   int get_port() const;
