@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:10 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 03:30:14 by tharutyu         ###   ########.fr       */
+/*   Updated: 2022/10/05 13:20:24 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void Channel::setMode(std::string mode) { this->mode = mode; }
 
 std::string Channel::getMode() { return this->mode; }
 
-{ return topic; }
+std::string Channel::getTopic() { return topic; }
 
 std::string Channel::getChannelMode() const {
   if (mode.find('p') != std::string::npos)
