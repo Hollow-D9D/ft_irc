@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   LIST.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 11:50:58 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 13:37:38 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 14:56:01 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "Command.h"
 #include "Server.h"
 #include "User.h"
+#include "Utilities.h"
 #include <vector>
 
 // Copied method it's 4 AM
@@ -53,13 +54,13 @@ void LIST(Command &cmd) {
          it != channels.end(); ++it)
       if (strmatch((*it)->getName(), cmd.get_arguments()[0]))
         cmd.get_sender().reply(322, (*it)->getName(),
-                               std::string("" + (*it)->getUsers().size()),
+                               Utilities::to_string("" + (*it)->getUsers().size()),
                                (*it)->getTopic());
   } else
     for (std::vector<Channel *>::iterator it = channels.begin();
          it != channels.end(); ++it)
       cmd.get_sender().reply(322, (*it)->getName(),
-                             std::string("" + (*it)->getUsers().size()),
+                             Utilities::to_string("" + (*it)->getUsers().size()),
                              (*it)->getTopic());
   cmd.get_sender().reply(323);
 }
