@@ -3,14 +3,13 @@
 #include "../Server.h"
 #include "../User.h"
 
-void INVITE(Command &cmd)
-{
-    // Numeric error responses
-    if (cmd.get_arguments().size() < 2)
-        return cmd.get_sender().reply(461, "INVITE");
-    
-    if (cmd.get_server().get_user(cmd.get_arguments()[0]) == NULL)
-        return cmd.get_sender().reply(401, cmd.get_arguments()[1]);
+void INVITE(Command &cmd) {
+  // Numeric error responses
+  if (cmd.get_arguments().size() < 2)
+    return cmd.get_sender().reply(461, "INVITE");
+
+  if (cmd.get_server().get_user(cmd.get_arguments()[0]) == NULL)
+    return cmd.get_sender().reply(401, cmd.get_arguments()[1]);
 
     if (cmd.get_server().get_channel(cmd.get_arguments()[0]).inChannel(cmd.get_arguments()[1]))
         cmd.get_sender().reply(443, cmd.get_arguments()[0], cmd.get_arguments()[1]);

@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 13:17:06 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 14:09:31 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,7 @@ bool Server::handle() {
     if (user)
       user->push();
     if (user && user->get_status() == USER_STATUS_DISCONNECTED) {
+      FD_CLR(user->get_fd(), &m_master_fds);
       delete user;
       m_users.erase(it++);
     } else

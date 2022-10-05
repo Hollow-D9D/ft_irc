@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 23:33:10 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 13:24:30 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 13:40:14 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void Channel::setName(std::string name) { this->name = name; }
 std::string Channel::getName() const { return this->name; }
 
 void Channel::setTopic(std::string topic) { this->topic = topic; }
-std::string Channel::getTopic() { return topic; }
+
 void Channel::setMode(std::string mode) { this->mode = mode; }
 
 std::string Channel::getMode() { return this->mode; }
