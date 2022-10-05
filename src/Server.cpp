@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:34:47 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 10:40:40 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:00:47 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int Server::init() {
   return 0;
 }
 
-User *Server::get_user(std::string &name) {
+User *Server::get_user(const std::string &name) {
   for (std::map<int, User *>::iterator it = m_users.begin();
        it != m_users.end(); ++it) {
     if ((*it).second->get_nickname() == name)
