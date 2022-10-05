@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 11:50:00 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 11:52:23 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:08:27 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@ void WHO(Command &command) {
   User &sender = command.get_sender();
   Server &server = command.get_server();
   const std::vector<std::string> &arguments = command.get_arguments();
-  if (sender.get_status() != USER_STATUS_ONLINE)
+  if (sender.get_status() != USER_STATUS_ONLINE) {
+    sender.reply(451);
     return;
+  }
 
   if (arguments.empty()) {
     sender.reply(461, "WHO");
