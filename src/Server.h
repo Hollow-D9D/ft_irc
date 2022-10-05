@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:49:25 by tharutyu         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:55:06 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ private:
   std::string m_password;
   int m_listening_fd;
   fd_set m_master_fds;
-  time_t m_created_at;
+  std::time_t m_created_at;
+  std::time_t m_pinged_at;
   std::map<int, User *> m_users;
   std::map<std::string, CommandHandlerCallback> m_commands;
   std::map<std::string, Channel> m_channels;
