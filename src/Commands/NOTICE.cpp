@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   PRIVMSG.cpp                                        :+:      :+:    :+:   */
+/*   NOTICE.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/03 10:08:20 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/05 11:52:20 by aabajyan         ###   ########.fr       */
+/*   Created: 2022/10/05 09:46:25 by aavetyan          #+#    #+#             */
+/*   Updated: 2022/10/05 11:52:18 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,34 +16,34 @@
 #include "User.h"
 #include <algorithm>
 
-void PRIVMSG(Command &cmd) {
-  Server &server = cmd.get_server();
-  User &sender = cmd.get_sender();
+void NOTICE(Command &cmd) {
   const std::vector<std::string> &args = cmd.get_arguments();
-  if (args.empty())
-    return sender.reply(411, "PRIVMSG");
+  User &sender = cmd.get_sender();
+  Server &server = cmd.get_server();
+  if (!args.size() || !cmd.get_message().length())
+    return;
   std::vector<User *> users;
   std::string getter = args.at(0);
   if (*getter.begin() == '#') {
     if (server.is_channel(getter)) {
       Channel &channel = server.get_channel(getter);
       if (!channel.isUser(sender))
-        return sender.reply(404, channel.getName());
+        return;
       users = channel.getUsers();
       std::vector<User *>::iterator it =
           std::find(users.begin(), users.end(), &sender);
       if (it != users.end())
         users.erase(it);
     } else
-      return sender.reply(404, getter);
+      return;
   } else {
     if (server.get_user(getter))
       users.push_back(server.get_user(getter));
     else
-      return sender.reply(401, getter);
+      return;
   }
-  for (std::vector<User *>::iterator it = users.begin(); it != users.end();
-       ++it)
+  std::vector<User *>::iterator it;
+  for (it = users.begin(); it != users.end(); ++it)
     if (sender != *(*it))
-      sender.send_to(*(*it), "PRIVMSG " + getter + " :" + cmd.get_message());
+      sender.send_to(*(*it), "NOTICE" + getter + ":" + cmd.get_message());
 }

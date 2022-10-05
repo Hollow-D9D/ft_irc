@@ -1,25 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   PING.cpp                                           :+:      :+:    :+:   */
+/*   Utilities.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/03 14:24:41 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/05 12:38:37 by aabajyan         ###   ########.fr       */
+/*   Created: 2022/10/05 11:36:37 by aabajyan          #+#    #+#             */
+/*   Updated: 2022/10/05 11:52:38 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Command.h"
-#include "User.h"
+#ifndef __UTILITIES_H__
+#define __UTILITIES_H__
+#include <sstream>
+#include <string>
+#include <vector>
 
-void PING(Command &cmd) {
-  std::vector<std::string> arguments = cmd.get_arguments();
-  User &sender = cmd.get_sender();
-  if (arguments.empty()) {
-    sender.reply(409, "PING");
-    return;
-  }
-  sender.set_last_ping(std::time(NULL));
-  sender.send_to(sender, "PONG :" + arguments[0]);
+namespace Utilities {
+template <typename T> std::string to_string(T in) {
+  std::stringstream stream;
+  stream << in;
+  return stream.str();
 }
+
+std::vector<std::string> split(std::string arg, const std::string &c);
+
+} // namespace Utilities
+
+#endif // __UTILITIES_H__

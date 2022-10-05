@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:52:06 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 23:48:05 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:37:14 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ enum UserStatus {
 };
 
 #define BUFFER_SIZE 4096
+#define AWAY_MESSAGE "is away"
 
 class Server;
 class Command;

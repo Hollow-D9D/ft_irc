@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 23:49:52 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 11:37:56 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "Common.h"
 #include "Response.h"
 #include "Server.h"
+#include "Utilities.h"
 #include <algorithm>
 #include <cstring>
 #include <iomanip>
@@ -90,7 +91,7 @@ void User::set_status(UserStatus status) {
   m_status = status;
 
   if (m_status == USER_STATUS_ONLINE) {
-    std::string users_count = std::to_string(m_server.get_users().size());
+    std::string users_count = Utilities::to_string(m_server.get_users().size());
     reply(001, get_prefix());
     reply(002, m_hostname, "1.0");
     reply(003, m_server.get_created_at_formatted());
@@ -98,7 +99,7 @@ void User::set_status(UserStatus status) {
     reply(251, users_count, "0");
     reply(252, "0");
     reply(253, "0");
-    reply(254, std::to_string(m_server.get_channels().size()));
+    reply(254, Utilities::to_string(m_server.get_channels().size()));
     reply(255, users_count, "0");
   }
 }

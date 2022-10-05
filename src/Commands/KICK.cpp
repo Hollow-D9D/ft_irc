@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 12:10:59 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/05 10:38:59 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 11:52:12 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,14 @@
 #include "Command.h"
 #include "Server.h"
 #include "User.h"
-
-std::vector<std::string> split(std::string arg, std::string c) {
-  std::vector<std::string> channels;
-  size_t pos;
-  while ((pos = arg.find(c)) != std::string::npos) {
-    channels.push_back(arg.substr(0, pos));
-    arg.erase(0, pos + 1);
-  }
-  channels.push_back(arg);
-  return channels;
-}
+#include "Utilities.h"
 
 void KICK(Command &cmd) {
   std::vector<std::string> arguments = cmd.get_arguments();
   if (arguments.empty())
     return cmd.get_sender().reply(403, "KICK");
-  std::vector<std::string> channels = split(arguments[0], ",");
-  std::vector<std::string> users = split(arguments[1], ",");
+  std::vector<std::string> channels = Utilities::split(arguments[0], ",");
+  std::vector<std::string> users = Utilities::split(arguments[1], ",");
   std::vector<std::string>::iterator it;
   for (it = channels.begin(); it != channels.end(); ++it) {
     if (!cmd.get_server().is_channel(*it)) {

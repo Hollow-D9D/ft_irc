@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 00:33:31 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/03 23:42:53 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 12:55:06 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ public:
 
   std::time_t get_created_at() const;
   std::string get_created_at_formatted() const;
-  std::string get_users_count() const;
 
   const std::string &get_password() const;
   int get_port() const;
@@ -44,7 +43,7 @@ public:
   const std::map<std::string, CommandHandlerCallback> get_commands() const;
 
   std::map<int, User *> &get_users();
-  User *get_user(std::string &name);
+  User *get_user(const std::string &name);
 
   bool is_channel(std::string const &name) const;
   std::vector<Channel *> get_channels();
@@ -62,7 +61,8 @@ private:
   std::string m_password;
   int m_listening_fd;
   fd_set m_master_fds;
-  time_t m_created_at;
+  std::time_t m_created_at;
+  std::time_t m_pinged_at;
   std::map<int, User *> m_users;
   std::map<std::string, CommandHandlerCallback> m_commands;
   std::map<std::string, Channel> m_channels;

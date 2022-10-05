@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   WHOIS.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/05 11:49:57 by aabajyan          #+#    #+#             */
+/*   Updated: 2022/10/05 12:08:34 by aabajyan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Channel.hpp"
 #include "Command.h"
 #include "Server.h"
@@ -8,8 +20,10 @@ void WHOIS(Command &command) {
   User &sender = command.get_sender();
   const std::vector<std::string> &arguments = command.get_arguments();
 
-  if (sender.get_status() != USER_STATUS_ONLINE)
+  if (sender.get_status() != USER_STATUS_ONLINE) {
+    sender.reply(451);
     return;
+  }
 
   if (arguments.empty()) {
     sender.reply(461, "WHOIS");
