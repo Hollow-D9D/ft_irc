@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 09:46:25 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/05 13:37:46 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/05 21:12:20 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,5 @@ void NOTICE(Command &cmd) {
   std::vector<User *>::iterator it;
   for (it = users.begin(); it != users.end(); ++it)
     if (sender != *(*it))
-      sender.send_to(*(*it), "NOTICE" + getter + ":" + cmd.get_message());
+      sender.send_to(*(*it), "NOTICE " + getter + ":" + cmd.get_message());
 }
