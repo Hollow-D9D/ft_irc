@@ -6,7 +6,7 @@
 /*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 15:53:44 by aabajyan          #+#    #+#             */
-/*   Updated: 2022/10/05 17:16:22 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/06 12:38:03 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,7 @@ void User::parse_messages() {
     return;
 
   if (size == 0) {
+    broadcast("QUIT :Connection lost");
     set_status(USER_STATUS_DISCONNECTED);
     return;
   }
