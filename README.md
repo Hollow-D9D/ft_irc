@@ -16,4 +16,6 @@ Creating a TCP Server in C++: https://www.youtube.com/watch?v=cNdlrbZSkyQ
 
 select(2) — Linux manual page: https://man7.org/linux/man-pages/man2/select.2.html
 
+poll vs select vs event-based: https://daniel.haxx.se/docs/poll-vs-select.html
+
 Internet Relay Chat Protocol Documentation: https://dd.ircdocs.horse/refs/commands/nick
