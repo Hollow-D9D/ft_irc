@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KICK.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 12:10:59 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/06 11:44:03 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/06 12:44:21 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ void KICK(Command &cmd) {
     }
     Channel &channel = cmd.get_server().get_channel(*it);
     if (channel.getUserMode(cmd.get_sender()).find('O') == std::string::npos &&
-      channel.getUserMode(cmd.get_sender()).find('O') == std::string::npos &&
-      cmd.get_sender().get_user_mode().has_mode(USER_MODE_OPERATOR) == std::string::npos)
+        channel.getUserMode(cmd.get_sender()).find('O') == std::string::npos &&
+        cmd.get_sender().get_user_mode().has_mode(USER_MODE_OPERATOR))
       return cmd.get_sender().reply(482, *it);
     std::vector<std::string>::iterator it2;
     for (it2 = users.begin(); it2 != users.end(); ++it2) {

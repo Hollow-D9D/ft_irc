@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   JOIN.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 10:34:41 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/06 12:16:20 by aavetyan         ###   ########.fr       */
+/*   Updated: 2022/10/06 12:44:08 by aabajyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,14 @@
 #include "User.h"
 #include "Utilities.h"
 
-
-void leave_all_channels(Command &cmd)
-{
+void leave_all_channels(Command &cmd) {
   std::vector<Channel *> channels = cmd.get_server().get_channels();
   std::vector<Channel *>::iterator it;
-  for (it = channels.begin(); it < channels.end(); ++it)
-  {
-    (*it)->broadcast(cmd.get_sender(), "PART " + (*it)->getName()
-      + (cmd.get_arguments().size() > 1 ? " :" + cmd.get_arguments()[1] : ""));
+  for (it = channels.begin(); it < channels.end(); ++it) {
+    (*it)->broadcast(cmd.get_sender(), "PART " + (*it)->getName() +
+                                           (cmd.get_arguments().size() > 1
+                                                ? " :" + cmd.get_arguments()[1]
+                                                : ""));
     (*it)->eraseUser(cmd.get_sender());
     if ((*it)->getUsers().size() == 0)
       cmd.get_server().delete_channel(*(*it));
@@ -43,33 +42,26 @@ void JOIN(Command &cmd) {
   std::vector<std::string> channels_name = Utilities::split(arguments[0], ",");
   for (std::vector<std::string>::iterator it = channels_name.begin();
        it != channels_name.end(); ++it) {
-      if (it->c_str()[0] != '#')
-      {
-        sender.reply(476, *it);
-        continue;
-      }
+    if (it->c_str()[0] != '#') {
+      sender.reply(476, *it);
+      continue;
+    }
     Channel &channel = cmd.get_server().get_channel(*it);
-    if (channel.getUsers().size() == 0)
-    {
+    if (channel.getUsers().size() == 0) {
       channel.addUser(sender);
       channel.setUserMode(sender, "O");
-    }
-    else
-    {
-      if (channel.getChannelMode().find('k') != std::string::npos)
-      {
+    } else {
+      if (channel.getChannelMode().find('k') != std::string::npos) {
         sender.reply(475, *it);
         continue;
       }
-      if (channel.getChannelMode().find('l') != std::string::npos)
-      {
+      if (channel.getChannelMode().find('l') != std::string::npos) {
         sender.reply(471, *it);
         continue;
       }
       if (channel.getChannelMode().find('i') != std::string::npos &&
-        !channel.isInvitedUser(sender) &&
-        sender.get_user_mode().has_mode(USER_MODE_OPERATOR) == std::string::npos)
-      {
+          !channel.isInvitedUser(sender) &&
+          sender.get_user_mode().has_mode(USER_MODE_OPERATOR)) {
         sender.reply(473, *it);
         continue;
       }
@@ -85,8 +77,7 @@ void JOIN(Command &cmd) {
       channel_mode = "=";
     if (channel.getTopic().length())
       sender.reply(332, *it, channel.getTopic());
-    sender.reply(353, channel_mode, *it,
-                 users_to_string(channel));
+    sender.reply(353, channel_mode, *it, users_to_string(channel));
     sender.reply(366, *it);
     channel.broadcast(sender, "JOIN :" + channel.getName());
   }

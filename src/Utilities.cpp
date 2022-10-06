@@ -15,13 +15,12 @@ std::vector<std::string> Utilities::split(std::string arg,
   return channels;
 }
 
-
-std::string users_to_string(Channel channel) {
+std::string users_to_string(Channel &channel) {
   std::vector<User *> users = channel.getUsers();
   std::string users_string = "";
 
-  for (std::vector<User *>::iterator it = users.begin(); it != users.end();
-       ++it) {
+  for (std::vector<User *>::const_iterator it = users.begin();
+       it != users.end(); ++it) {
     if ((*it)->get_user_mode().has_mode(USER_MODE_INVISIBLE))
       continue;
     if (users_string.length())
