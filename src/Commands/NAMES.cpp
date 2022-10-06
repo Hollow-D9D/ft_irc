@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   NAMES.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabajyan <arsen.abajyan@pm.me>             +#+  +:+       +#+        */
+/*   By: aavetyan <aavetyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 11:48:19 by aavetyan          #+#    #+#             */
-/*   Updated: 2022/10/05 13:36:49 by aabajyan         ###   ########.fr       */
+/*   Updated: 2022/10/06 12:14:56 by aavetyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,7 @@
 #include "Command.h"
 #include "Server.h"
 #include "User.h"
-
-std::string users_to_string(Channel channel) {
-  std::vector<User *> users = channel.getUsers();
-  std::string users_string = "";
-
-  for (std::vector<User *>::iterator it = users.begin(); it != users.end();
-       ++it) {
-    if ((*it)->get_user_mode().has_mode(USER_MODE_INVISIBLE))
-      continue;
-    if (users_string.length())
-      users_string += " ";
-    if (channel.getUserMode(*(*it)).find('O') != std::string::npos ||
-        channel.getUserMode(*(*it)).find('o') != std::string::npos)
-      users_string += "@";
-    users_string += (*it)->get_nickname();
-  }
-  return users_string;
-}
+#include "Utilities.h"
 
 void NAMES(Command &cmd) {
   std::vector<Channel *> channels = cmd.get_server().get_channels();
