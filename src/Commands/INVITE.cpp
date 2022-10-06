@@ -34,7 +34,7 @@ void INVITE(Command &cmd) {
     channel.addInvitedUser(*(server.get_user(arguments[0])));
   }
   sender.send_to(*(server.get_user(arguments[0])),
-                 "INVITE" + arguments[0] + " " + arguments[1]);
+                 "INVITE " + arguments[0] + " " + arguments[1]);
   sender.reply(341, arguments[0], arguments[1]);
   if (server.get_user(arguments[0])->get_user_mode().has_mode(USER_MODE_AWAY))
     sender.reply(301, arguments[0], AWAY_MESSAGE);
